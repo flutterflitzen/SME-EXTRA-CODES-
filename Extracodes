@@ -1,0 +1,788 @@
+//Todo Time sheet buttion
+// GestureDetector(
+//   onTap: () async {
+//     AppUtils().playAudio(audioPlayer: AppWidgets.audioPlayer);
+//     Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditTimesheet())); 
+//   },
+//   child: Container(
+//     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+//     padding: EdgeInsets.symmetric(vertical: 5.h),
+//     decoration: BoxDecoration(
+//       borderRadius: BorderRadius.circular(0),
+//       color: AppColors.lightblue,
+//       shape: BoxShape.rectangle,
+//       border: Border.all(color: AppColors.white.withValues(alpha: 0.5), width: 2),
+//       boxShadow: const [
+//         BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
+//       ],
+//     ),
+//     width: Get.width * 0.8,
+//     child: Center(
+//       child: AppWidgets.snText(
+//         text: 'Add Manually \nTimesheet Data',
+//         textAlign: TextAlign.center,
+//         style: AppFonts.white16.copyWith(fontWeight: FontWeight.w500, fontSize: 16.sp),
+//       ),
+//     ),
+//   ),
+// )
+
+
+
+//Todo: Old Main.dart
+//import 'dart:io';
+// // import 'package:firebase_analytics/firebase_analytics.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:flutter/services.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+// import 'package:responsive_sizer/responsive_sizer.dart';
+// import 'package:sme/app/pin/pin_view.dart';
+// import 'dart:async';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:onesignal_flutter/onesignal_flutter.dart';
+// import 'package:sme/utils/appdatabase.dart';
+// import 'package:sme/utils/appfonts.dart';
+// import 'package:sme/utils/appobserver.dart';
+// import 'package:sme/utils/appstring.dart';
+// import 'package:sme/utils/appdevice.dart';
+// import 'package:sme/app/user/onboarding/onboarding_view.dart';
+// import 'package:sme/utils/appconfig.dart';
+// import 'package:sme/utils/apptheme.dart';
+// import 'package:sme/utils/firebase_options.dart';
+//
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   try {
+//     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//     // FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+//   } catch (e) {
+//     debugPrint("Failed to initialize Firebase: $e");
+//   }
+//   // FlutterError.onError = (errorDetails) => FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+//   // PlatformDispatcher.instance.onError = (error, stack) {
+//   //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+//   //   return true;
+//   // };
+//   //NotificationService.initNotification();
+//   await HiveDB.initHive();
+//   await DeviceInfoService.getAndStoreDeviceName();
+//   Platform.isAndroid ? await AppConfig.androidConfigs() : await AppConfig.iosConfigs();
+//   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+//   OneSignal.initialize("9c26be87-a367-4d58-9003-3606f2b55098");
+//   OneSignal.Notifications.requestPermission(true);
+//   AppLoader.configLoading();
+//   final bool isLoggedIn = await HiveDB.getData(AppStrings.ISlOGIN) ?? false;
+//   runApp(MyApp(initialRoute: isLoggedIn ? '/pin' : '/onboarding'));
+// }
+//
+// class MyApp extends StatelessWidget {
+//   final String initialRoute;
+//
+//   const MyApp({required this.initialRoute, super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return ResponsiveSizer(
+//       builder: (context, orientation, deviceType) {
+//         return StyledToast(
+//           locale: const Locale('en', 'US'),
+//           textStyle: AppFonts.regular.copyWith(color: Colors.white, fontSize: 15.sp),
+//           backgroundColor: Colors.black54,
+//           child: GetMaterialApp(
+//             debugShowCheckedModeBanner: false,
+//             title: 'SME Construction',
+//             theme: AppTheme.appTheme(),
+//             enableLog: true,
+//             supportedLocales: const [Locale('en', 'US')],
+//             builder: EasyLoading.init(),
+//             initialRoute: initialRoute,
+//             getPages: [
+//               GetPage(name: '/onboarding', page: () => const OnboardingView()),
+//               GetPage(name: '/pin', page: () => const PinView()),
+//             ],
+//             navigatorObservers: [
+//               // FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+//               AppNavigationObserver(),
+//             ],
+//             smartManagement: SmartManagement.full,
+//             localizationsDelegates: const [
+//               GlobalMaterialLocalizations.delegate,
+//               GlobalWidgetsLocalizations.delegate,
+//               GlobalCupertinoLocalizations.delegate,
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
+
+//TOdo: Timesheet Select Date Code
+// Future<void> selectDate(BuildContext context) async {
+//   DateTime normalizeDate(DateTime date) {
+//     return DateTime(date.year, date.month, date.day);
+//   }
+//
+//   List<DateTime> baseDates = [];
+//   List<String> disableDatesFromApi = disableDates.map((item) => item.wCDate).toList();
+//
+//   baseDates.addAll(disableDatesFromApi.map((dateStr) {
+//     return DateTime.parse(dateStr);
+//   }));
+//
+//   final allExcludedDates = baseDates.expand((baseDate) {
+//     return List.generate(7, (index) => DateTime(baseDate.year, baseDate.month, baseDate.day + index));
+//   }).toSet();
+//
+//   DateTime now = normalizeDate(DateTime.now());
+//
+//   DateTime initialDate = normalizeDate(selectedDate.value ?? now);
+//
+//   if (initialDate.isBefore(now)) {
+//     initialDate = now;
+//   }
+//
+//   while (allExcludedDates.any((date) => normalizeDate(date).isAtSameMomentAs(normalizeDate(initialDate)))) {
+//     initialDate = DateTime(initialDate.year, initialDate.month, initialDate.day - 1);
+//   }
+//
+//   final DateTime? picked = await showDatePicker(
+//     context: context,
+//     initialDate: initialDate,
+//     firstDate: DateTime(2000),
+//     lastDate: DateTime.now(),
+//
+//
+//     builder: (BuildContext context, Widget? child) {
+//       return Theme(
+//         data: ThemeData.light().copyWith(
+//           colorScheme: const ColorScheme.light(
+//             primary: AppColors.darkBlue2,
+//             onPrimary: Colors.white,
+//             surface: Colors.white,
+//             onSurface: Colors.black,
+//           ),
+//           dialogBackgroundColor: Colors.white,
+//           datePickerTheme: DatePickerThemeData(
+//             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+//           ),
+//           timePickerTheme: TimePickerThemeData(
+//             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+//           ),
+//         ),
+//         child: child!,
+//       );
+//     },
+//
+//     selectableDayPredicate: (DateTime day) {
+//       day = normalizeDate(day);
+//       return !allExcludedDates.any((date) => normalizeDate(date).isAtSameMomentAs(day));
+//     },
+//   );
+//
+//   if (picked != null && picked != selectedDate.value) {
+//     selectedDate.value = picked;
+//   }
+// }
+
+// Future<void> selectDate(BuildContext context) async {
+//   final DateTime? picked = await showDatePicker(
+//     context: context,
+//     initialDate: selectedDate.value ?? DateTime.now(),
+//     firstDate: DateTime(2000),
+//     lastDate: DateTime.now(),
+//     builder: (BuildContext context, Widget? child) {
+//       return AppWidgets.datePickerDate(child);
+//     },
+//     // selectableDayPredicate: (day) {
+//     //   return day.weekday != DateTime.sunday;
+//     // },
+//   );
+//   if (picked != null && picked != selectedDate.value) {
+//     selectedDate.value = picked;
+//   }
+// }
+
+
+//TODO : Approval Request Extra code
+// Future<void> getPendingRequests(Map<String, dynamic> data) async {
+//   var res = await ApiServices().apiService(data, ApiUrls.getRequests);
+//   if (res != null && res.statusCode == 200) {
+//     AppWidgets.toast(msg: 'Success');
+//   } else {
+//     AppWidgets.toast(msg: 'Something Went Wrong');
+//   }
+// }
+
+// Future<Map<String, dynamic>> checkVersion() async {
+//   var res = await ApiServices().apiService({'API_KEY': ApiUrls.apiKey}, ApiUrls.versionCheck);
+//   if (res != null && res.statusCode == 200) {
+//     if (kDebugMode) {
+//       print(res.data);
+//     }
+//     return res.data;
+//   } else {
+//     throw Exception('Failed to load version data');
+//   }
+// }
+
+//TODO : Site Diaries Code
+// Future<void> getReviewSiteDiaryData() async {
+//   isLoading.value = true;
+//   String uId = await HiveDB.getData(AppStrings.UID);
+//   filterData = {'user_id': uId, 'type': '1'};
+//   var response = await ApiServices().apiService(filterData, ApiUrls.getSiteDiary);
+//   if (response != null && response.statusCode == 200) {
+//     if (response.data['status'] == 1) {
+//       siteDiaryReviewedList.clear();
+//       for (var i in response.data['data']) {
+//         siteDiaryReviewedList.add(SiteDiaryDataModel.fromJson(i));
+//       }
+//       isLoading.value = false;
+//     } else if (response.data['status'] == 'access_token_error') {
+//       Get.offAll(() => LoginView());
+//       isLoading.value = false;
+//       AppWidgets.toast(msg: 'Your Login Session has Expired');
+//     }
+//   } else {
+//     AppWidgets.toast(msg: 'Something Went Wrong!');
+//     isLoading.value = false;
+//   }
+// }
+//
+// Future<void> getApprovedSiteData() async {
+//   isLoading.value = true;
+//   String uId = await HiveDB.getData(AppStrings.UID);
+//   filterData = {'user_id': uId, 'type': '2'};
+//   var response = await ApiServices().apiService(filterData, ApiUrls.getSiteDiary);
+//   if (response != null && response.statusCode == 200) {
+//
+//     if (response.data['status'] == 1) {
+//       siteDiaryApprovedList.clear();
+//       for (var i in response.data['data']) {
+//         siteDiaryApprovedList.add(SiteDiaryDataModel.fromJson(i));
+//       }
+//       isLoading.value = false;
+//     } else if (response.data['status'] == 'access_token_error') {
+//       Get.offAll(() => LoginView());
+//       isLoading.value = false;
+//       AppWidgets.toast(msg: 'Your Login Session has Expired');
+//     }
+//   } else {
+//     isLoading.value = false;
+//     AppWidgets.toast(msg: 'Something Went Wrong!');
+//   }
+// }
+
+//
+// Future<void> deleteImage(String? diaryId, String? imagePath, bool isEdit, int index) async {
+//   if (isEdit) {
+//     EasyLoading.show();
+//     final response = await ApiServices().apiService({'attachment': imagePath, 'site_diary_id': diaryId}, ApiUrls.deletePhotoFromList);
+//     if (response != null && response.statusCode == 200) {
+//       if (response.data['status'] == 1) {
+//         EasyLoading.dismiss();
+//         AppWidgets.toast(msg: response.data['message'], backgroundColor: AppColors.green);
+//         singleSiteDiary.first.attachments.removeAt(index);
+//         selectedImages.removeAt(index);
+//       } else if (response.data['status'] == 'access_token_error') {
+//         Get.offAll(() => LoginView());
+//         EasyLoading.dismiss();
+//
+//         AppWidgets.toast(msg: 'Your Login Session has Expired', backgroundColor: AppColors.red);
+//       } else {
+//         EasyLoading.dismiss();
+//
+//         AppWidgets.toast(msg: ' ${response.data['message']}#', backgroundColor: AppColors.red);
+//       }
+//     } else {
+//       EasyLoading.dismiss();
+//
+//       AppWidgets.toast(msg: 'Something went wrong!!', backgroundColor: AppColors.red);
+//     }
+//   } else {
+//     selectedImages.removeAt(index);
+//   }
+// }
+
+//Todo : Dashboard Menu Api
+
+// Future<void> getAppMenu() async {
+//   String userId = await HiveDB.getData(AppStrings.UID);
+//   var response = await ApiServices().apiService({'user_id': userId}, ApiUrls.getAppMenu);
+//   if (response != null && response.statusCode == 200) {
+//     if (response.data['status'] == 1) {
+//       appMenuGetData.clear();
+//       appMenuGetData.add(AppMenuGetData.fromJson(response.data));
+//       debugPrint('Dashboard Menu Updated Successfully at ${DateTime.now()}');
+//     } else if (response.data['status'] == 'access_token_error') {
+//       Get.offAll(() => LoginView());
+//       AppWidgets.toast(msg: 'Your Login Session has Expired');
+//     } else {
+//       appMenuGetData.clear();
+//       //AppWidgets.toast(msg: '${response.data['message']}');
+//     }
+//   } else {
+//     AppWidgets.toast(msg: 'No response from server!');
+//   }
+// }
+
+//TODO: Punch Out View Location Function IN UI
+// Future<void> getCurrentLocation() async {
+//   try {
+//     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+//     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+//     Placemark place = placemarks[0];
+//     setState(() {
+//       locationText = '${position.latitude},${position.longitude}';
+//       locationName = "${place.street}";
+//       isLocationFetched = true;
+//     });
+//   } catch (e) {
+//     debugPrint('===Error in Location Fetching===$e');
+//   }
+// }
+
+//Todo : Punch In Location Fetch Function IN UI Code
+// Future<void> getCurrentLocation() async {
+//   dashboardLogic.locationText.value = 'Fetching location...';
+//   dashboardLogic.isLocationFetched.value = false;
+//   try {
+//     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+//     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+//     Placemark place = placemarks[0];
+//     dashboardLogic.locationText.value = '${position.latitude},${position.longitude}';
+//     dashboardLogic.locationName.value = "${place.street}";
+//     dashboardLogic.isLocationFetched.value = true;
+//   } catch (e) {
+//     debugPrint('Error: $e');
+//   }
+// }
+
+//Todo: OLD  Code Store Return Card
+
+// Widget buildItemCard(PossessionItem2 item, int index) {
+//   return Padding(
+//     padding: const EdgeInsets.all(8.0),
+//     child: Container(
+//       padding: const EdgeInsets.all(8),
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(7),
+//         color: AppColors.lightblue.withValues(alpha: 0.9),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Expanded(
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.start,
+//                   children: [
+//                     SizedBox(
+//                       height: 25,
+//                       width: 25,
+//                       child: Obx(
+//                         () => Checkbox(
+//                           activeColor: AppColors.white,
+//                           checkColor: AppColors.lightblue,
+//                           side: const BorderSide(color: AppColors.white),
+//                           value: item.isSelected.value,
+//                           onChanged: (value) {
+//                             handleItemSelection(item, value ?? false);
+//                           },
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 5),
+//                     Expanded(
+//                       child: AppWidgets.snText(
+//                         text: item.itemName == null || item.itemName == "" ? "--" : item.itemName,
+//                         style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 15.sp),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               Obx(
+//                 () => SizedBox(
+//                   width: Get.width * 0.33,
+//                   child: Row(
+//                     children: [
+//                       IconButton(
+//                         onPressed: () {
+//                           if (item.quantity.value > 1) {
+//                             item.quantity.value--;
+//                           }
+//                         },
+//                         icon: const Icon(Icons.remove, color: AppColors.white, size: 20),
+//                       ),
+//                       AppWidgets.snText(
+//                         text: "Qty ${item.quantity.value}",
+//                         style: AppFonts.white16.copyWith(fontWeight: FontWeight.w500, fontSize: 15.sp),
+//                       ),
+//                       IconButton(
+//                         onPressed: () {
+//                           if (widget.isEdit) {
+//                             if (item.quantity.value < item.originalQuantity) {
+//                               item.quantity.value++;
+//                             } else {
+//                               AppWidgets.toast(msg: "You cannot exceed the original quantity of ${item.originalQuantity}", backgroundColor: AppColors.red);
+//                             }
+//                           } else {
+//                             final maxQuantityItem = storeController.storePossesionList.first.data?.firstWhere((element) => element.itemId == item.id);
+//                             final maxQuantity = int.parse(maxQuantityItem?.quantity ?? "0");
+//                             if (item.quantity.value < maxQuantity) {
+//                               item.quantity.value++;
+//                             } else {
+//                               AppWidgets.toast(msg: "Maximum Quantity Reached", backgroundColor: AppColors.red);
+//                             }
+//                           }
+//                         },
+//                         icon: const Icon(Icons.add, color: AppColors.white, size: 20),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           Column(
+//             spacing: 8,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               AppWidgets.snText(
+//                 text: "Category Name: ${item.categoryName ?? "--"}",
+//                 style: AppFonts.white16.copyWith(fontWeight: FontWeight.w500, fontSize: 15.sp),
+//               ),
+//               AppWidgets.snText(
+//                 text: "SME Code: ${item.smeCode ?? "--"}",
+//                 style: AppFonts.white16.copyWith(fontWeight: FontWeight.w500, fontSize: 15.sp),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
+
+//Todo: OLD Main dart Code
+
+// import 'dart:io';
+// import 'package:firebase_analytics/firebase_analytics.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/services.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+// import 'package:responsive_sizer/responsive_sizer.dart';
+// import 'package:sme/app/pin/pin_view.dart';
+// import 'dart:async';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:onesignal_flutter/onesignal_flutter.dart';
+// import 'package:sme/utils/appdatabase.dart';
+// import 'package:sme/utils/appfonts.dart';
+// import 'package:sme/utils/appnotification.dart';
+// import 'package:sme/utils/appstring.dart';
+// import 'package:sme/utils/appdevice.dart';
+// import 'package:sme/app/user/onboarding/onboarding_view.dart';
+// import 'package:sme/utils/appconfig.dart';
+// import 'package:sme/utils/firebase_options.dart';
+//
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   try {
+//     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//     FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+//   } catch (e) {
+//     debugPrint("Failed to initialize Firebase: $e");
+//   }
+//   FlutterError.onError = (errorDetails) {
+//     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+//   };
+//   PlatformDispatcher.instance.onError = (error, stack) {
+//     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+//     return true;
+//   };
+//   NotificationService.initNotification();
+//   await HiveDB.initHive();
+//   await DeviceInfoService.getAndStoreDeviceName();
+//   Platform.isAndroid ? await AppConfig.androidConfigs() : await AppConfig.iosConfigs();
+//   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+//   OneSignal.initialize("9c26be87-a367-4d58-9003-3606f2b55098");
+//   OneSignal.Notifications.requestPermission(true);
+//   AppLoader.configLoading();
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return ResponsiveSizer(
+//       builder: (context, orientation, deviceType) {
+//         return StyledToast(
+//           locale: const Locale('en', 'US'),
+//           textStyle: AppFonts.regular.copyWith(color: Colors.white),
+//           backgroundColor: Colors.black54,
+//           child: GetMaterialApp(
+//             debugShowCheckedModeBanner: false,
+//             title: 'SME Construction',
+//             theme: ThemeData(
+//               datePickerTheme: DatePickerThemeData(
+//                 backgroundColor: Colors.white,
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//               ),
+//             ),
+//             enableLog: false,
+//             navigatorObservers: [
+//               FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+//             ],
+//             localizationsDelegates: const [
+//               GlobalMaterialLocalizations.delegate,
+//               GlobalWidgetsLocalizations.delegate,
+//               GlobalCupertinoLocalizations.delegate,
+//             ],
+//             supportedLocales: const [Locale('en', 'US')],
+//             builder: EasyLoading.init(),
+//             home: FutureBuilder(
+//               future: HiveDB.getData(AppStrings.ISlOGIN),
+//               builder: (context, snapshot) {
+//                 if (snapshot.hasData && snapshot.data != null) {
+//                   if (snapshot.data) {
+//                     return const PinView();
+//                   } else {
+//                     return const OnboardingView();
+//                   }
+//                 } else {
+//                   return const OnboardingView();
+//                 }
+//               },
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
+//main.dart
+
+// class MainWrapper extends StatelessWidget {
+//   final Widget child;
+//
+//   const MainWrapper({super.key, required this.child});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final upgrader = Upgrader(
+//       durationUntilAlertAgain: const Duration(days: 1),
+//       dialogStyle: Platform.isIOS ? UpgradeDialogStyle.cupertino : UpgradeDialogStyle.material,
+//       messages: UpgraderMessages(code: 'en'),
+//       minAppVersion: '3.0.0',
+//       debugDisplayAlways: kDebugMode,
+//       debugLogging: true,
+//       showLater: true,
+//       showIgnore: false,
+//       canDismissDialog: false,
+//       onUpdate: () {
+//         debugPrint('Update is available!');
+//         return true;
+//       },
+//     );
+//     return Material(
+//       child: Builder(
+//         builder: (context) {
+//           return UpgradeAlert(
+//             upgrader: upgrader,
+//             child: child,
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
+//Todo: OLD  Punch In Dialog Code
+// Navigator.pop(context);
+//
+// await showDialog(
+//   context: context,
+//   builder: (context) {
+//     return Dialog(
+//       backgroundColor: Colors.transparent,
+//       child: SingleChildScrollView(
+//         child: Container(
+//           width: MediaQuery.of(context).size.width * 0.85,
+//           decoration: BoxDecoration(
+//             color: AppColors.lightblue,
+//             borderRadius: BorderRadius.circular(15),
+//             border: Border.all(color: Colors.white.withOpacity(0.7), width: 2),
+//             gradient: const LinearGradient(
+//               begin: Alignment.topLeft,
+//               end: Alignment.bottomRight,
+//               colors: [
+//                 AppColors.darkBlue,
+//                 AppColors.lightblue,
+//               ],
+//             ),
+//             boxShadow: const [
+//               BoxShadow(
+//                 color: Colors.black26,
+//                 blurRadius: 10,
+//                 offset: Offset(0, 4),
+//               ),
+//             ],
+//           ),
+//           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             children: [
+//               AppWidgets.snText(
+//                 text: '${dashboardLogic.siteDataModel!.jobNo} - ${dashboardLogic.siteDataModel!.projectName}',
+//                 style: AppFonts.regular.copyWith(
+//                   color: Colors.white,
+//                   fontSize: 16.sp,
+//                   fontWeight: FontWeight.w600,
+//                   shadows: [
+//                     const Shadow(
+//                       blurRadius: 10.0,
+//                       color: Colors.black26,
+//                       offset: Offset(2.0, 2.0),
+//                     ),
+//                   ],
+//                 ),
+//                 textAlign: TextAlign.center,
+//                 maxLines: 2,
+//               ),
+//               const SizedBox(height: 12),
+//               AppWidgets.snText(
+//                 text: 'Location: ${dashboardLogic.siteDataModel?.fullAddress == "" ? "-" : dashboardLogic.siteDataModel?.fullAddress}',
+//                 style: AppFonts.appColor12.copyWith(
+//                   color: Colors.white,
+//                   fontSize: 16.sp,
+//                   fontWeight: FontWeight.bold,
+//                   letterSpacing: 1.1,
+//                 ),
+//                 textAlign: TextAlign.center,
+//                 maxLines: 2,
+//               ),
+//               const SizedBox(height: 12),
+//               AppWidgets.snText(
+//                 text: 'Do you want to Punch In?',
+//                 style: AppFonts.regular.copyWith(
+//                   color: Colors.white,
+//                   fontSize: 16.sp,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//                 textAlign: TextAlign.center,
+//               ),
+//               const SizedBox(height: 20),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                 children: [
+//                   Expanded(
+//                     child: Padding(
+//                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//                       child: ElevatedButton(
+//                         onPressed: () async {
+//                           if (dashboardLogic.locationText.value == 'Fetching location...' || dashboardLogic.locationText.value == '') {
+//                             AppWidgets.toast(msg: 'Please wait while fetching location...');
+//                             return;
+//                           }
+//                           dashboardLogic.isPunchIn.value = true;
+//                           dashboardLogic.punchInTime = TimeOfDay.now();
+//                           dashboardLogic.pickedTime = DateTime.now();
+//                           dashboardLogic.siteId = valueAfterEquals;
+//                           dashboardLogic.isCheck.value = 'true';
+//                           await HiveDB.addData(AppStrings.jobId, dashboardLogic.siteId);
+//                           await HiveDB.addData(AppStrings.isPunched, true);
+//                           await HiveDB.addData(AppStrings.pickedTime, dashboardLogic.pickedTime);
+//                           await HiveDB.addData(AppStrings.checkedIn, "true");
+//                           await HiveDB.addData(AppStrings.punchInLatLong, dashboardLogic.locationText.value);
+//                           await HiveDB.addData(AppStrings.punchInTime, dashboardLogic.punchInTime!.format(context));
+//                           String clockPunchInTime = await HiveDB.getData(AppStrings.punchInTime) ?? "";
+//                           AppUtils().playAudio(audioPlayer: AppWidgets.audioPlayer, audio: AppMusic.punchSound);
+//                           NotificationService.repeatNotification(title: 'Punch Reminder', body: 'You have punched in at $clockPunchInTime.');
+//                           if (context.mounted) {
+//                             Navigator.of(context).pop();
+//                           }
+//                           announcementController.recall.value = Random().nextInt(99999999);
+//                           announcementController.recall.value = Random().nextInt(99999999);
+//                         },
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: Colors.green,
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(10),
+//                           ),
+//                           minimumSize: const Size(double.infinity, 50),
+//                         ),
+//                         child: AppWidgets.snText(
+//                           text: 'YES',
+//                           style: AppFonts.appColor12.copyWith(
+//                             color: Colors.white,
+//                             fontSize: 15.sp,
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Expanded(
+//                     child: Padding(
+//                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//                       child: ElevatedButton(
+//                         onPressed: () {
+//                           Navigator.of(context).pop();
+//                         },
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: Colors.red,
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(10),
+//                           ),
+//                           minimumSize: const Size(double.infinity, 50),
+//                         ),
+//                         child: AppWidgets.snText(
+//                           text: 'CANCEL',
+//                           style: AppFonts.appColor12.copyWith(
+//                             color: Colors.white,
+//                             fontSize: 15.sp,
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   },
+// );
+
+//TODO : Project TextFields
+// Container(
+//   height: Get.height * 0.065,
+//   padding: const EdgeInsets.all(10),
+//   margin: const EdgeInsets.all(10),
+//   decoration: BoxDecoration(color: AppColors.lightblue.withValues(alpha:.6), borderRadius: const BorderRadius.all(Radius.circular(30))),
+//   child: AppWidgets.searchTextFeild(
+//     controller: projectsLogic.searchController,
+//     onChanged:
+//   ),
+// ),
