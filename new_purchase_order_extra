@@ -1,0 +1,1800 @@
+//TODO : Add Purchase Order
+
+
+// RxString totalOfMaterial({bool isVat = false}) {
+//   double subTotal = 0.0;
+//   double vat = 0.0;
+//   subTotal = state.newPurchaseManualMaterialList.fold<double>(0.0, (previousValue, element) {
+//     final productPrice = double.tryParse(element.productPrice ?? '0') ?? 0.0;
+//     final productQty = double.tryParse(element.productQty ?? '0') ?? 0.0;
+//     return previousValue + productPrice * productQty;
+//   });
+//   if (isVat) {
+//     vat = subTotal * 0.2;
+//   }
+//   RxString total = "".obs;
+//   total.value = (subTotal + vat).toString();
+//   return total;
+// }
+//
+// RxString totalOfEquipment({bool isVat = false}) {
+//   double subTotal = 0.0;
+//   double vat = 0.0;
+//   subTotal = state.newPurchaseManualEquipmentList.fold<double>(0.0, (previousValue, element) {
+//     final productPrice = double.tryParse(element.productPrice ?? '0') ?? 0.0;
+//     final productQty = double.tryParse(element.productQty ?? '0') ?? 0.0;
+//     return previousValue + productPrice * productQty;
+//   });
+//   if (isVat) {
+//     vat = subTotal * 0.2;
+//   }
+//   RxString total = "".obs;
+//   total.value = (subTotal + vat).toString();
+//   return total;
+// }
+
+
+// CommonDialogue.selectProjectSiteSheet(
+//   onSelected: (index) {
+//     SiteController siteController = Get.put(SiteController());
+//     state.selectedProject.value = siteController.sitesList[index].projectName ?? '';
+//     state.selectedProjectId.value = siteController.sitesList[index].jobId ?? '';
+//   },
+// );
+
+// Visibility(
+//   visible: widget.purchaseType == 1,
+//   child: AppWidgets.snButton(
+//     title: "Add Materials",
+//     color: AppColors.white,
+//     onTap: () => NewPurchaseOrderDialogues().addMaterialProductDialogue(),
+//     icon: Icons.add_circle,
+//   ),
+// ),
+// Visibility(
+//   visible: widget.purchaseType == 1,
+//   child: Obx(() {
+//     return ListView.builder(
+//         shrinkWrap: true,
+//         physics: const NeverScrollableScrollPhysics(),
+//         padding: EdgeInsets.zero,
+//         itemCount: state.newPurchaseManualMaterialList.length,
+//         itemBuilder: (context, index) {
+//           return AppWidgets.customProductTile(
+//             title: state.newPurchaseManualMaterialList[index].productName.toString(),
+//             qty: state.newPurchaseManualMaterialList[index].productQty.toString(),
+//             itemPrice: state.newPurchaseManualMaterialList[index].productPrice.toString(),
+//             itemTotalPrice: state.newPurchaseManualMaterialList[index].productTotalPrice.toString(),
+//             onTap: () {
+//               NewPurchaseOrderDialogues().editQtyDialogueForAdd(index: index, selectedProduct: state.newPurchaseManualMaterialList).then((value) {
+//                 state.valueAmountController.text = state.newPurchaseManualMaterialList.fold<double>(0.0, (previousValue, element) {
+//                   final productPrice = double.tryParse(element.productPrice ?? '0') ?? 0.0;
+//                   final productQty = double.tryParse(element.productQty ?? '0') ?? 0.0;
+//                   return previousValue + productPrice * productQty;
+//                 }).toString();
+//               });
+//             },
+//           );
+//         });
+//   }),
+// ),
+// Visibility(
+//   visible: widget.purchaseType == 2,
+//   child: AppWidgets.snButton(
+//     title: "Add Equipment",
+//     color: AppColors.white,
+//     onTap: () => NewPurchaseOrderDialogues().addEquipmentProductDialogue(),
+//     icon: Icons.add_circle,
+//   ),
+// ),
+// Visibility(
+//     visible: widget.purchaseType == 2,
+//     child: Obx(() {
+//       return ListView.builder(
+//         padding: EdgeInsets.zero,
+//         shrinkWrap: true,
+//         physics: const NeverScrollableScrollPhysics(),
+//         itemCount: state.newPurchaseManualEquipmentList.length,
+//         itemBuilder: (context, index) {
+//           return AppWidgets.customProductTile(
+//             title: state.newPurchaseManualEquipmentList[index].productName.toString(),
+//             qty: state.newPurchaseManualEquipmentList[index].productQty.toString(),
+//             itemPrice: state.newPurchaseManualEquipmentList[index].productPrice.toString(),
+//             itemTotalPrice: state.newPurchaseManualEquipmentList[index].productTotalPrice.toString(),
+//             onTap: () async {
+//               await NewPurchaseOrderDialogues().editQtyDialogueForAdd(index: index, selectedProduct: state.newPurchaseManualEquipmentList).then((value) {
+//                 state.valueAmountController.text = state.newPurchaseManualEquipmentList.fold<double>(0.0, (previousValue, element) {
+//                   final productPrice = double.tryParse(element.productPrice ?? '0') ?? 0.0;
+//                   final productQty = double.tryParse(element.productQty ?? '0') ?? 0.0;
+//                   return previousValue + productPrice * productQty;
+//                 }).toString();
+//               });
+//             },
+//           );
+//         },
+//       );
+//     })),
+
+// Visibility(
+//   visible: widget.purchaseType == 1,
+//   child: AppWidgets.commonUI(
+//     isShowWidget: true,
+//     title: "Delivery Note",
+//     widget: Container(
+//       decoration: const BoxDecoration(color: AppColors.lightblue),
+//       child: AppWidgets.quoteFieldsC(textEditingController: state.deliveryNoteController, maxLine: 4),
+//     ),
+//   ),
+// ),
+
+// AppWidgets.uploadImageButton(
+//   buttonText: "Upload Pictures",
+//   onTap: () async => AppWidgets.imagePickerDialogue(
+//     onCamera: () => logic.pickImages(false),
+//     onGallery: () => logic.pickImages(true),
+//   ),
+// ),
+// Obx(() {
+//   return state.selectedImages.isNotEmpty
+//       ? Container(
+//           width: Get.width,
+//           margin: const EdgeInsets.symmetric(horizontal: 8),
+//           decoration: const BoxDecoration(color: AppColors.lightblue),
+//           height: 120,
+//           child: ValueListenableBuilder(
+//             valueListenable: state.refreshImagesChange,
+//             builder: (context, value, child) {
+//               return ListView.builder(
+//                 shrinkWrap: true,
+//                 scrollDirection: Axis.horizontal,
+//                 itemCount: state.selectedImages.length,
+//                 itemBuilder: (context, index) {
+//                   return AppWidgets.imageBox(
+//                     image: state.selectedImages[index].path,
+//                     onRemove: () {
+//                       state.selectedImages.removeAt(index);
+//                       state.refreshImagesChange.value = Random().nextInt(100);
+//                     },
+//                   );
+//                 },
+//               );
+//             },
+//           ),
+//         )
+//       : const SizedBox();
+// }),
+// SizedBox(height: 5.h),
+
+// if (widget.purchaseType == 1) {
+//   if (state.newPurchaseManualMaterialList.isEmpty) {
+//     AppWidgets.toast(msg: "Please add materials", backgroundColor: AppColors.red);
+//     return;
+//   }
+// }
+// if (widget.purchaseType == 2) {
+//   if (state.newPurchaseManualEquipmentList.isEmpty) {
+//     AppWidgets.toast(msg: "Please add equipment", backgroundColor: AppColors.red);
+//     return;
+//   }
+// }
+
+// if (widget.purchaseType == 1) {
+// for (int i = 0; i < state.newPurchaseManualMaterialList.length; i++) {
+//   data.addAll({
+//     'item_name[$i]': state.newPurchaseManualMaterialList[i].productName,
+//     'quantity[$i]': state.newPurchaseManualMaterialList[i].productQty,
+//     'price[$i]': state.newPurchaseManualMaterialList[i].productPrice,
+//   });
+// }
+// }
+
+// if (widget.purchaseType == 2) {
+//   for (int i = 0; i < state.newPurchaseManualEquipmentList.length; i++) {
+//     data.addAll({
+//       'item_name[$i]': state.newPurchaseManualEquipmentList[i].productName,
+//       'quantity[$i]': state.newPurchaseManualEquipmentList[i].productQty,
+//       'price[$i]': state.newPurchaseManualEquipmentList[i].productPrice,
+//     });
+//   }
+// }
+
+// if (widget.purchaseType == 1) {
+//   data.addAll({
+//     'delivery_note': state.deliveryNoteController.text,
+//   });
+// }
+
+// if (widget.purchaseType == 2) {
+//   state.newPurchaseManualEquipmentList.clear();
+//   if (state.newPurchaseSingleDataModelList.first.itemDetails != null) {
+//     List<NewPurchaseAddProductModel> itemDetails = state.newPurchaseSingleDataModelList.first.itemDetails!
+//         .map((e) => NewPurchaseAddProductModel(
+//               productId: e.itemType.toString(),
+//               productName: e.itemName.toString(),
+//               productQty: e.quantity.toString(),
+//               productPrice: e.price.toString(),
+//               productTotalPrice: e.total.toString(),
+//             ))
+//         .toList();
+//     state.newPurchaseManualEquipmentList.addAll(itemDetails);
+//   }
+// }
+
+// state.newPurchaseManualMaterialList.clear();
+// if (state.newPurchaseSingleDataModelList.first.itemDetails != null && state.newPurchaseSingleDataModelList.first.itemDetails!.isNotEmpty) {
+//   List<NewPurchaseAddProductModel> itemDetails = state.newPurchaseSingleDataModelList.first.itemDetails!
+//       .map((e) => NewPurchaseAddProductModel(
+//             productId: e.itemType.toString(),
+//             productName: e.itemName.toString(),
+//             productQty: e.quantity.toString(),
+//             productPrice: e.price.toString(),
+//             productTotalPrice: e.total.toString(),
+//           ))
+//       .toList();
+//   state.newPurchaseManualMaterialList.addAll(itemDetails);
+// }
+
+// GestureDetector(
+//   onTap: () => state.useOnSite.value = !state.useOnSite.value,
+//   child: Container(
+//     decoration: const BoxDecoration(color: AppColors.lightblue),
+//     child: ListTile(
+//       tileColor: AppColors.lightblue,
+//       contentPadding: EdgeInsets.zero,
+//       minVerticalPadding: 0,
+//       minLeadingWidth: 0,
+//       title: Row(
+//         children: [
+//           Obx(() {
+//             return Checkbox(
+//               activeColor: AppColors.green,
+//               side: const BorderSide(color: AppColors.white, width: 1),
+//               value: state.useOnSite.value,
+//               onChanged: (value) => state.useOnSite.value = value!,
+//             );
+//           }),
+//           AppWidgets.snText(
+//             text: "Use On Site",
+//             style: AppFonts.regular.copyWith(color: AppColors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
+//           ),
+//         ],
+//       ),
+//     ),
+//   ),
+// ),
+
+// state.deliveryNoteController.text = state.newPurchaseSingleDataModelList.first.deliveryType.toString();
+// state.selectedImages.clear();
+// if (state.newPurchaseSingleDataModelList.first.attachments != null) {
+//   for (int i = 0; i < state.newPurchaseSingleDataModelList.first.attachments!.length; i++) {
+//     String attachmentUrl = state.newPurchaseSingleDataModelList.first.attachments![i];
+//     String filePath = await AppUtils.downloadAndStoreImage(attachmentUrl);
+//     XFile xFile = XFile(filePath);
+//     state.selectedImages.add(xFile);
+//   }
+// }
+//  state.refreshImagesChange.value = Random().nextInt(100);
+
+// AppWidgets.snButton(
+// title: "Add Materials",
+// icon: Icons.add_circle,
+// color: AppColors.white,
+// onTap: () => NewPurchaseOrderDialogues().addMaterialDialogue(context),
+// ),
+// Row(
+// children: [
+// Expanded(
+// child: AppWidgets.dialogueButton(
+// title: "Add Plants",
+// iconSize: 24.sp,
+// fontSize: 15.sp,
+// onTap: () => NewPurchaseOrderDialogues().addPlanDialogue(context),
+// ),
+// ),
+// Expanded(
+// child: AppWidgets.dialogueButton(
+// title: "Add Equipment",
+// iconSize: 24.sp,
+// fontSize: 15.sp,
+// onTap: () => NewPurchaseOrderDialogues().addAccessEquipmentDialogue(context),
+// ),
+// ),
+// ],
+// ),
+// //A add plant
+// ValueListenableBuilder(
+// valueListenable: state.dialogueListChange,
+// builder: (context, value, child) {
+// return ListView.builder(
+// shrinkWrap: true,
+// physics: const NeverScrollableScrollPhysics(),
+// padding: EdgeInsets.zero,
+// itemCount: state.plantProduct.length,
+// itemBuilder: (context, index) {
+// return AppWidgets.customProductTile(
+// onTap: () {
+// categoryProductController.counter.value = int.parse(state.plantProduct[index].qty);
+// categoryProductController.unitPrice.value = double.parse(state.plantProduct[index].itemPrice);
+// categoryProductController.totalPrice.value = categoryProductController.unitPrice.value * categoryProductController.counter.value;
+// categoryProductController.unitPriceController.text = categoryProductController.unitPrice.value.toString();
+// NewPurchaseOrderDialogues().editQtyDialogue(index: index, selectedProduct: state.plantProduct);
+// },
+// title: state.plantProduct[index].items,
+// itemPrice: state.plantProduct[index].itemPrice,
+// itemTotalPrice: state.plantProduct[index].itemTotalPrice,
+// qty: state.plantProduct[index].qty,
+// );
+// },
+// );
+// },
+// ),
+// //B add material
+// ValueListenableBuilder(
+// valueListenable: state.dialogueListChange,
+// builder: (context, value, child) {
+// return ListView.builder(
+// shrinkWrap: true,
+// physics: const NeverScrollableScrollPhysics(),
+// padding: EdgeInsets.zero,
+// itemCount: state.materialProduct.length,
+// itemBuilder: (context, index) {
+// return AppWidgets.customProductTile(
+// onTap: () {
+// categoryProductController.counter.value = int.parse(state.materialProduct[index].qty);
+// categoryProductController.unitPrice.value = double.parse(state.materialProduct[index].itemPrice);
+// categoryProductController.totalPrice.value = categoryProductController.unitPrice.value * categoryProductController.counter.value;
+// categoryProductController.unitPriceController.text = categoryProductController.unitPrice.value.toString();
+// NewPurchaseOrderDialogues().editQtyDialogue(index: index, selectedProduct: state.materialProduct);
+// },
+// title: state.materialProduct[index].items,
+// itemPrice: state.materialProduct[index].itemPrice,
+// itemTotalPrice: state.materialProduct[index].itemTotalPrice,
+// qty: state.materialProduct[index].qty,
+// );
+// },
+// );
+// },
+// ),
+// // C add services
+// ValueListenableBuilder(
+// valueListenable: state.dialogueListChange,
+// builder: (context, value, child) {
+// return ListView.builder(
+// shrinkWrap: true,
+// physics: const NeverScrollableScrollPhysics(),
+// padding: EdgeInsets.zero,
+// itemCount: state.accessProduct.length,
+// itemBuilder: (context, index) {
+// return AppWidgets.customProductTile(
+// onTap: () {
+// categoryProductController.counter.value = int.parse(state.accessProduct[index].qty);
+// categoryProductController.unitPrice.value = double.parse(state.accessProduct[index].itemPrice);
+// categoryProductController.totalPrice.value = categoryProductController.unitPrice.value * categoryProductController.counter.value;
+// categoryProductController.unitPriceController.text = categoryProductController.unitPrice.value.toString();
+// NewPurchaseOrderDialogues().editQtyDialogue(index: index, selectedProduct: state.accessProduct);
+// },
+// title: state.accessProduct[index].items,
+// itemPrice: state.accessProduct[index].itemPrice,
+// itemTotalPrice: state.accessProduct[index].itemTotalPrice,
+// qty: state.accessProduct[index].qty,
+// );
+// },
+// );
+// },
+// ),
+
+//   SizedBox(height: .5.h),
+//                       Obx(() {
+//                         return AppWidgets.totalContainer(
+//                           subtotal: "SubTotal",
+//                           subtotal1: "£ ${categoryProductController.subtotal.value.toStringAsFixed(2)}",
+//                           vat: "VAT(20%)",
+//                           vat1: "£ ${categoryProductController.vat.value.toStringAsFixed(2)}",
+//                           grandTotal: "Grand Total",
+//                           grandTotal1: "£ ${categoryProductController.grandTotal.value.toStringAsFixed(2)}",
+//                         );
+//                       }),
+
+//  Future<dynamic> addPlanDialogue(BuildContext context) {
+//     clearDialogueValues();
+//     return showDialog(
+//       context: context,
+//       builder: (context) {
+//         return ValueListenableBuilder(
+//           valueListenable: state.dialogueListChange,
+//           builder: (context, value, child) {
+//             return BackdropFilter(
+//               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//               child: Dialog(
+//                 insetPadding: const EdgeInsets.all(20),
+//                 backgroundColor: AppColors.white,
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//                 child: Obx(() {
+//                   return Column(
+//                     children: [
+//                       Container(
+//                         decoration: const BoxDecoration(color: AppColors.lightblue),
+//                         child: AppBar(
+//                           backgroundColor: AppColors.lightblue,
+//                           leading: IconButton(
+//                             onPressed: () => Get.back(),
+//                             icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
+//                           ),
+//                           title: AppWidgets.customText(text: 'Select Tools', style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp)),
+//                         ),
+//                       ),
+//                       Container(
+//                         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//                         decoration: BoxDecoration(
+//                           color: AppColors.darkBlue.withValues(alpha: 0.6),
+//                         ),
+//                         child: AppWidgets.searchTextFeild(
+//                           onChanged: (value) => state.searchProductValue.value = value,
+//                           onTap: () {
+//                             state.searchProductShow.value = true;
+//                             state.rootCatShow.value = false;
+//                             state.subCatShow.value = false;
+//                             state.productShow.value = false;
+//                             state.rootCatName.value = '';
+//                             state.subCatName.value = '';
+//                             state.selectIndex.value = -1;
+//                             state.subCategoryList.clear();
+//                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                           },
+//                           controller: state.searchFieldController,
+//                           suffixIcon: Visibility(
+//                             visible: state.searchProductShow.value,
+//                             child: Padding(
+//                               padding: const EdgeInsets.all(8.0),
+//                               child: CircleAvatar(
+//                                 backgroundColor: AppColors.red,
+//                                 child: IconButton(
+//                                   onPressed: () {
+//                                     state.searchProductValue.value = '';
+//                                     state.searchFieldController.clear();
+//                                     state.rootCatShow.value = true;
+//                                     state.subCatShow.value = false;
+//                                     state.productShow.value = false;
+//                                     state.searchProductShow.value = false;
+//                                     state.rootCatName.value = '';
+//                                     state.subCatName.value = '';
+//                                     state.selectIndex.value = -1;
+//                                     state.subCategoryList.clear();
+//                                     FocusScope.of(context).unfocus();
+//                                     state.dialogueListChange.value = Random().nextInt(9999999);
+//                                   },
+//                                   icon: const Icon(Icons.close, color: AppColors.white),
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                       if (state.rootCatName.isNotEmpty)
+//                         Padding(
+//                           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
+//                           child: SingleChildScrollView(
+//                             padding: EdgeInsets.zero,
+//                             scrollDirection: Axis.horizontal,
+//                             child: SizedBox(
+//                               width: Get.width,
+//                               child: Row(
+//                                 mainAxisAlignment: MainAxisAlignment.start,
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   InkWell(
+//                                     onTap: () {
+//                                       state.rootCatShow.value = true;
+//                                       state.subCatShow.value = false;
+//                                       state.productShow.value = false;
+//                                       state.rootCatName.value = '';
+//                                       state.subCatName.value = '';
+//                                       state.subCategoryList.clear();
+//                                       state.searchFieldController.clear();
+//                                       state.searchProductValue.value = '';
+//                                       state.dialogueListChange.value = Random().nextInt(9999999);
+//                                     },
+//                                     child: AppWidgets.customText(text: state.rootCatName.value, style: AppFonts.lightBlueColor16.copyWith(fontSize: 14)),
+//                                   ),
+//                                   const Padding(
+//                                     padding: EdgeInsets.symmetric(horizontal: 3.0),
+//                                     child: Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.lightblue),
+//                                   ),
+//                                   if (state.subCatName.isNotEmpty)
+//                                     InkWell(
+//                                       onTap: () {
+//                                         state.rootCatShow.value = false;
+//                                         state.subCatShow.value = true;
+//                                         state.productShow.value = false;
+//                                         state.subCatName.value = '';
+//                                         state.productList.clear();
+//                                         state.searchFieldController.clear();
+//                                         state.searchProductValue.value = '';
+//                                         state.dialogueListChange.value = Random().nextInt(9999999);
+//                                       },
+//                                       child: AppWidgets.customText(text: state.subCatName.value, style: AppFonts.lightBlueColor16.copyWith(fontSize: 14)),
+//                                     ),
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       if (state.rootCatShow.isFalse) SizedBox(height: Get.height * 0.01),
+//                       if (state.rootCatShow.value)
+//                         Expanded(
+//                           child: Padding(
+//                             padding: const EdgeInsets.all(8.0),
+//                             child: ValueListenableBuilder(
+//                               valueListenable: state.searchProductValue,
+//                               builder: (context, String search, child) {
+//                                 return DynamicHeightGridView(
+//                                   crossAxisCount: 3,
+//                                   crossAxisSpacing: 5,
+//                                   mainAxisSpacing: 7,
+//                                   itemCount: categoryController.selectedPlant?.pRootCategories?.where((category) => search.isEmpty || (category.rootName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length ?? 0,
+//                                   builder: (context, index) {
+//                                     var filteredCategories = categoryController.selectedPlant?.pRootCategories?.where((category) => search.isEmpty || (category.rootName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList() ?? [];
+//                                     var category = filteredCategories[index];
+//                                     return AppWidgets.gridView(
+//                                       onTap: () {
+//                                         state.rootCatName.value = category.rootName ?? '';
+//                                         state.rootCatShow.value = false;
+//                                         state.subCatShow.value = false;
+//                                         state.productShow.value = true;
+//                                         state.dialogueListChange.value = Random().nextInt(9999999);
+//                                         state.searchFieldController.clear();
+//                                         state.searchProductValue.value = '';
+//                                         FocusScope.of(context).unfocus();
+//                                         var selectedRootId = category.rootId;
+//                                         state.productList2.clear();
+//                                         for (var product in categoryController.selectedPlant?.pProducts ?? []) {
+//                                           if (product.rootId == selectedRootId) {
+//                                             state.productList2.add(product);
+//                                           }
+//                                         }
+//                                       },
+//                                       color: AppColors.lightblue,
+//                                       title: '${category.rootName}',
+//                                     );
+//                                   },
+//                                 );
+//                               },
+//                             ),
+//                           ),
+//                         ),
+//                       if (state.productShow.value)
+//                         Expanded(
+//                           child: Padding(
+//                             padding: const EdgeInsets.all(8.0),
+//                             child: ValueListenableBuilder(
+//                               valueListenable: state.searchProductValue,
+//                               builder: (context, String search, child) {
+//                                 return DynamicHeightGridView(
+//                                   crossAxisCount: 3,
+//                                   crossAxisSpacing: 5,
+//                                   mainAxisSpacing: 7,
+//                                   itemCount: state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length,
+//                                   builder: (context, index) {
+//                                     var filteredProducts = state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//                                     var product = filteredProducts[index];
+//                                     return Obx(() {
+//                                       return AppWidgets.gridView(
+//                                         onTap: () {
+//                                           // state.subCatName.value = '${product.rootName}';
+//                                           state.selectIndex.value = index;
+//                                           state.plantName.value = product.productName!;
+//                                         },
+//                                         color: state.selectIndex.value == index ? AppColors.green : AppColors.lightblue,
+//                                         title: "${product.productName}",
+//                                       );
+//                                     });
+//                                   },
+//                                 );
+//                               },
+//                             ),
+//                           ),
+//                         ),
+//                       if (state.searchProductShow.value)
+//                         Builder(
+//                           builder: (context) {
+//                             state.productList2.clear();
+//                             for (var product in categoryController.selectedPlant!.pProducts!) {
+//                               state.productList2.add(product);
+//                             }
+//                             return Expanded(
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: ValueListenableBuilder(
+//                                   valueListenable: state.searchProductValue,
+//                                   builder: (context, String search, child) {
+//                                     var filteredProducts = state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//                                     if (filteredProducts.isEmpty) {
+//                                       return Center(
+//                                         child: Text(
+//                                           "No products found",
+//                                           style: AppFonts.black14.copyWith(fontWeight: FontWeight.bold),
+//                                         ),
+//                                       );
+//                                     }
+//                                     return DynamicHeightGridView(
+//                                       crossAxisCount: 3,
+//                                       crossAxisSpacing: 5,
+//                                       mainAxisSpacing: 7,
+//                                       itemCount: filteredProducts.length,
+//                                       builder: (context, index) {
+//                                         var product = filteredProducts[index];
+//                                         return Obx(() {
+//                                           return AppWidgets.gridView(
+//                                             onTap: () {
+//                                               state.subCatName.value = '${product.rootName}';
+//                                               state.selectIndex.value = index;
+//                                               state.plantName.value = product.productName!;
+//                                             },
+//                                             color: state.selectIndex.value == index ? AppColors.green : AppColors.lightblue,
+//                                             title: "${product.productName}",
+//                                           );
+//                                         });
+//                                       },
+//                                     );
+//                                   },
+//                                 ),
+//                               ),
+//                             );
+//                           },
+//                         ),
+//                       Obx(() {
+//                         return AppWidgets.incDec(
+//                           onDec: () => categoryProductController.decrement(),
+//                           onInc: () => categoryProductController.increment(),
+//                           value: "${categoryProductController.counter.value}",
+//                         );
+//                       }),
+//                       AppWidgets.unitDis(
+//                         ctr: categoryProductController.unitPriceController,
+//                         onSubmitted1: (value) {
+//                           categoryProductController.unitPriceController.text = value;
+//                           categoryProductController.calculatePrices();
+//                         },
+//                       ),
+//                       Obx(
+//                         () => AppWidgets.snText(
+//                           text: 'Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}',
+//                           style: AppFonts.black16.copyWith(
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                       ),
+//                       AppWidgets.addRemoveButton(
+//                         onAdd: () {
+//                           if (state.plantProduct.any((element) => element.productId == state.productList2[state.selectIndex.value].id)) {
+//                             AppWidgets.toast(msg: "This item is already added");
+//                           } else {
+//                             state.plantProduct.add(NewPurchaseProductModel(
+//                               qty: categoryProductController.counter.value.toString() == '' ? '0' : categoryProductController.counter.value.toString(),
+//                               items: state.plantName.value,
+//                               itemID: state.productList2[state.selectIndex.value].id!,
+//                               itemPrice: categoryProductController.unitPriceController.text == '' ? '0.0' : categoryProductController.unitPriceController.text,
+//                               itemTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                               productId: state.productList2[state.selectIndex.value].id!,
+//                               rootName: state.productList2[state.selectIndex.value].rootName!,
+//                             ));
+//                             categoryProductController.newPurchaseModelListCalculations(state.plantProduct, state.materialProduct, state.accessProduct);
+//                             state.rootCatShow.value = true;
+//                             state.subCatShow.value = false;
+//                             state.productShow.value = false;
+//                             state.rootCatName.value = '';
+//                             state.subCatName.value = '';
+//                             state.selectIndex.value = -1;
+//                             state.subCategoryList.clear();
+//                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                             categoryProductController.counter.value = 0;
+//                             categoryProductController.unitPriceController.text = '0.0';
+//                             categoryProductController.isVisible.value = true;
+//                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                             FocusScope.of(context).unfocus();
+//                             Get.back();
+//                           }
+//                         },
+//                         onRemove: () {
+//                           state.rootCatShow.value = true;
+//                           state.subCatShow.value = false;
+//                           state.productShow.value = false;
+//                           state.rootCatName.value = '';
+//                           state.subCatName.value = '';
+//                           state.selectIndex.value = -1;
+//                           state.subCategoryList.clear();
+//                           state.dialogueListChange.value = Random().nextInt(9999999);
+//                           categoryProductController.totalPrice.value = 0.0;
+//                           categoryProductController.counter.value = 0;
+//                           categoryProductController.unitPrice.value = 0.0;
+//                           categoryProductController.unitPriceController.text = '0.0';
+//                           FocusScope.of(context).unfocus();
+//                           Get.back();
+//                         },
+//                         removeText: "Cancel",
+//                       ),
+//                     ],
+//                   );
+//                 }),
+//               ),
+//             );
+//           },
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<dynamic> addMaterialDialogue(BuildContext context) {
+//     clearDialogueValues();
+//     return showDialog(
+//       context: context,
+//       builder: (context) {
+//         return ValueListenableBuilder(
+//           valueListenable: state.dialogueListChange,
+//           builder: (context, value, child) {
+//             return BackdropFilter(
+//               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//               child: Dialog(
+//                 insetPadding: const EdgeInsets.all(20),
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//                 backgroundColor: AppColors.white,
+//                 child: GestureDetector(
+//                   onTap: () => categoryProductController.calculatePrices(),
+//                   child: SizedBox(
+//                     height: Get.height * 1,
+//                     width: Get.width,
+//                     child: Obx(() {
+//                       return Column(
+//                         children: [
+//                           Container(
+//                             decoration: const BoxDecoration(color: AppColors.lightblue),
+//                             child: AppBar(
+//                               centerTitle: false,
+//                               backgroundColor: AppColors.lightblue,
+//                               leading: IconButton(
+//                                 onPressed: () => Get.back(),
+//                                 icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
+//                               ),
+//                               title: AppWidgets.customText(
+//                                 text: 'Select Materials',
+//                                 style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
+//                               ),
+//                               actions: [
+//                                 //create manual material
+//                                 Padding(
+//                                   padding: const EdgeInsets.symmetric(horizontal: 10),
+//                                   child: ElevatedButton(
+//                                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+//                                     onPressed: () {
+//                                       state.addManualMaterialFieldController.clear();
+//                                       Get.back();
+//                                       showDialog(
+//                                         context: context,
+//                                         builder: (context) {
+//                                           return BackdropFilter(
+//                                             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//                                             child: AlertDialog(
+//                                               contentPadding: const EdgeInsets.all(20),
+//                                               iconPadding: const EdgeInsets.all(0),
+//                                               actionsPadding: const EdgeInsets.all(0),
+//                                               insetPadding: const EdgeInsets.all(25),
+//                                               titlePadding: const EdgeInsets.all(0),
+//                                               backgroundColor: AppColors.white.withValues(alpha: .9),
+//                                               surfaceTintColor: AppColors.white.withValues(alpha: .9),
+//                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0), side: const BorderSide(color: AppColors.white, width: 1.5)),
+//                                               title: Container(
+//                                                 width: Get.width,
+//                                                 decoration: const BoxDecoration(color: AppColors.lightblue),
+//                                                 alignment: Alignment.center,
+//                                                 child: AppBar(
+//                                                   backgroundColor: AppColors.lightblue,
+//                                                   leading: const SizedBox(),
+//                                                   title: AppWidgets.snText(
+//                                                     text: 'Add Manual Material',
+//                                                     style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
+//                                                   ),
+//                                                   centerTitle: true,
+//                                                 ),
+//                                               ),
+//                                               content: Column(
+//                                                 mainAxisSize: MainAxisSize.min,
+//                                                 children: [
+//                                                   TextField(
+//                                                     cursorColor: AppColors.lightblue,
+//                                                     controller: state.addManualMaterialFieldController,
+//                                                     decoration: const InputDecoration(
+//                                                       labelText: 'Enter Material Name',
+//                                                       border: OutlineInputBorder(
+//                                                         borderSide: BorderSide(color: AppColors.lightblue),
+//                                                       ),
+//                                                     ),
+//                                                   ),
+//                                                   const SizedBox(height: 15),
+//                                                   Obx(() {
+//                                                     return AppWidgets.incDec(
+//                                                       onDec: () => categoryProductController.decrement(),
+//                                                       onInc: () => categoryProductController.increment(),
+//                                                       value: "${categoryProductController.counter.value}",
+//                                                     );
+//                                                   }),
+//                                                   const SizedBox(height: 5),
+//                                                   AppWidgets.unitDis(
+//                                                     ctr: categoryProductController.unitPriceController,
+//                                                     onSubmitted1: (value) {
+//                                                       categoryProductController.unitPriceController.text = value;
+//                                                       categoryProductController.calculatePrices();
+//                                                     },
+//                                                   ),
+//                                                   const SizedBox(height: 10),
+//                                                   Obx(() {
+//                                                     return Text(
+//                                                       'Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}',
+//                                                       style: const TextStyle(fontSize: 16),
+//                                                     );
+//                                                   }),
+//                                                   const SizedBox(height: 10),
+//                                                   Row(
+//                                                     children: [
+//                                                       Expanded(
+//                                                         child: ElevatedButton(
+//                                                           style: ElevatedButton.styleFrom(backgroundColor: AppColors.red, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))),
+//                                                           onPressed: () => Get.back(),
+//                                                           child: AppWidgets.snText(text: "Cancel", style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+//                                                         ),
+//                                                       ),
+//                                                       Expanded(
+//                                                         child: ElevatedButton(
+//                                                           onPressed: () {
+//                                                             if (state.addManualMaterialFieldController.text.isNotEmpty && state.addManualMaterialFieldController.text.isNotEmpty) {
+//                                                               state.materialProduct.add(
+//                                                                 NewPurchaseProductModel(
+//                                                                   qty: categoryProductController.counter.value.toString(),
+//                                                                   items: state.addManualMaterialFieldController.text,
+//                                                                   itemID: state.addManualMaterialFieldController.text,
+//                                                                   itemPrice: categoryProductController.unitPriceController.text,
+//                                                                   itemTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                                                                   emsCode: "",
+//                                                                   itemName: state.addManualMaterialFieldController.text,
+//                                                                   productId: state.addManualMaterialFieldController.text,
+//                                                                   partNO: "",
+//                                                                   rootName: "",
+//                                                                 ),
+//                                                               );
+//                                                               categoryProductController.newPurchaseModelListCalculations(state.plantProduct, state.materialProduct, state.accessProduct);
+//                                                               state.dialogueListChange.value = Random().nextInt(9999999);
+//                                                               categoryProductController.counter.value = 0;
+//                                                               categoryProductController.unitPriceController.text = '0.0';
+//                                                               categoryProductController.isVisible2.value = true;
+//                                                               state.dialogueListChange.value = Random().nextInt(9999999);
+//                                                               FocusScope.of(context).unfocus();
+//                                                               Get.back();
+//                                                             } else {
+//                                                               AppWidgets.toast(msg: "Please fill all the fields");
+//                                                             }
+//                                                           },
+//                                                           style: ElevatedButton.styleFrom(
+//                                                             shape: RoundedRectangleBorder(
+//                                                               borderRadius: BorderRadius.circular(0),
+//                                                             ),
+//                                                             backgroundColor: AppColors.green,
+//                                                           ),
+//                                                           child: AppWidgets.snText(
+//                                                             text: "Add",
+//                                                             style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+//                                                           ),
+//                                                         ),
+//                                                       ),
+//                                                     ],
+//                                                   )
+//                                                 ],
+//                                               ),
+//                                             ),
+//                                           );
+//                                         },
+//                                       );
+//                                     },
+//                                     child: AppWidgets.snText(
+//                                       text: "Add New",
+//                                       style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           //search field
+//                           Container(
+//                             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//                             decoration: BoxDecoration(
+//                               color: AppColors.darkBlue.withValues(alpha: 0.6),
+//                             ),
+//                             child: AppWidgets.searchTextFeild(
+//                               onChanged: (value) {
+//                                 state.searchProductValue.value = value;
+//                               },
+//                               onTap: () {
+//                                 state.searchProductShow.value = true;
+//                                 state.rootCatShow.value = false;
+//                                 state.subCatShow.value = false;
+//                                 state.productShow.value = false;
+//                                 state.rootCatName.value = '';
+//                                 state.subCatName.value = '';
+//                                 state.selectIndex.value = -1;
+//                                 state.subCategoryList.clear();
+//                                 state.dialogueListChange.value = Random().nextInt(9999999);
+//                               },
+//                               controller: state.searchFieldController,
+//                               suffixIcon: Visibility(
+//                                 visible: state.searchProductShow.value,
+//                                 child: Padding(
+//                                   padding: const EdgeInsets.all(8.0),
+//                                   child: CircleAvatar(
+//                                     backgroundColor: AppColors.red,
+//                                     child: IconButton(
+//                                       onPressed: () {
+//                                         state.searchProductValue.value = '';
+//                                         state.searchFieldController.clear();
+//                                         state.rootCatShow.value = true;
+//                                         state.subCatShow.value = false;
+//                                         state.productShow.value = false;
+//                                         state.searchProductShow.value = false;
+//                                         state.rootCatName.value = '';
+//                                         state.subCatName.value = '';
+//                                         state.selectIndex.value = -1;
+//                                         state.subCategoryList.clear();
+//                                         FocusScope.of(context).unfocus();
+//                                         state.dialogueListChange.value = Random().nextInt(9999999);
+//                                       },
+//                                       icon: const Icon(Icons.close, color: AppColors.white),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                           if (state.rootCatName.isNotEmpty)
+//                             Padding(
+//                               padding: const EdgeInsets.symmetric(
+//                                 vertical: 5.0,
+//                                 horizontal: 20,
+//                               ),
+//                               child: SingleChildScrollView(
+//                                 scrollDirection: Axis.horizontal,
+//                                 child: SizedBox(
+//                                   width: Get.width,
+//                                   child: Row(
+//                                     mainAxisAlignment: MainAxisAlignment.start,
+//                                     children: [
+//                                       InkWell(
+//                                         onTap: () {
+//                                           state.rootCatShow.value = true;
+//                                           state.subCatShow.value = false;
+//                                           state.productShow.value = false;
+//                                           state.rootCatName.value = '';
+//                                           state.subCatName.value = '';
+//                                           state.subCategoryList.clear();
+//                                           state.searchFieldController.clear();
+//                                           state.searchProductValue.value = '';
+//                                           FocusScope.of(context).unfocus();
+//                                           state.dialogueListChange.value = Random().nextInt(9999999);
+//                                         },
+//                                         child: AppWidgets.customText(
+//                                           text: state.rootCatName.value,
+//                                           style: AppFonts.lightBlueColor14,
+//                                         ),
+//                                       ),
+//                                       const Padding(
+//                                         padding: EdgeInsets.symmetric(horizontal: 3.0),
+//                                         child: Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.lightblue),
+//                                       ),
+//                                       if (state.subCatName.isNotEmpty)
+//                                         InkWell(
+//                                           onTap: () {
+//                                             state.rootCatShow.value = false;
+//                                             state.subCatShow.value = true;
+//                                             state.productShow.value = false;
+//                                             state.subCatName.value = '';
+//                                             state.productList.clear();
+//                                             state.searchFieldController.clear();
+//                                             state.searchProductValue.value = '';
+//                                             FocusScope.of(context).unfocus();
+//                                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                                           },
+//                                           child: AppWidgets.customText(text: state.subCatName.value, style: AppFonts.lightBlueColor14),
+//                                         ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                           if (state.rootCatShow.value)
+//                             Expanded(
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: ValueListenableBuilder(
+//                                   valueListenable: state.searchProductValue,
+//                                   builder: (context, String search, child) {
+//                                     return DynamicHeightGridView(
+//                                       crossAxisCount: 3,
+//                                       crossAxisSpacing: 5,
+//                                       mainAxisSpacing: 5,
+//                                       itemCount: categoryController.selectedPlant?.rootCategories?.where((category) => search.isEmpty || (category.rootName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length ?? 0,
+//                                       builder: (context, index) {
+//                                         var filteredCategories = categoryController.selectedPlant?.rootCategories?.where((category) => search.isEmpty || (category.rootName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList() ?? [];
+//                                         var category = filteredCategories[index];
+//                                         return AppWidgets.gridView(
+//                                           onTap: () {
+//                                             state.rootCatName.value = '${category.rootName}';
+//                                             state.rootCatShow.value = false;
+//                                             state.searchFieldController.clear();
+//                                             state.searchProductValue.value = '';
+//                                             state.subCatShow.value = true;
+//                                             state.productShow.value = false;
+//                                             var selectedRootId = category.rootId;
+//
+//                                             state.searchFieldController.clear();
+//                                             state.searchProductValue.value = '';
+//                                             FocusScope.of(context).unfocus();
+//
+//                                             state.subCategoryList.clear();
+//                                             for (var subCat in categoryController.selectedPlant?.subCategories ?? []) {
+//                                               if (subCat.rootId == selectedRootId) {
+//                                                 state.subCategoryList.add(subCat);
+//                                               }
+//                                             }
+//                                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                                           },
+//                                           color: AppColors.lightblue,
+//                                           title: '${category.rootName}',
+//                                         );
+//                                       },
+//                                     );
+//                                   },
+//                                 ),
+//                               ),
+//                             ),
+//                           if (state.subCatShow.value)
+//                             Expanded(
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: ValueListenableBuilder(
+//                                   valueListenable: state.searchProductValue,
+//                                   builder: (context, String search, child) {
+//                                     return DynamicHeightGridView(
+//                                       crossAxisCount: 3,
+//                                       crossAxisSpacing: 5,
+//                                       mainAxisSpacing: 5,
+//                                       itemCount: state.subCategoryList.where((subCat) => search.isEmpty || (subCat.subName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length,
+//                                       builder: (context, index) {
+//                                         var filteredSubCategories = state.subCategoryList.where((subCat) => search.isEmpty || (subCat.subName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//                                         var subCategory = filteredSubCategories[index];
+//                                         return AppWidgets.gridView(
+//                                           onTap: () {
+//                                             state.subCatName.value = '${subCategory.subName}';
+//                                             state.rootCatShow.value = false;
+//                                             state.subCatShow.value = false;
+//                                             state.searchFieldController.clear();
+//                                             state.searchProductValue.value = '';
+//                                             FocusScope.of(context).unfocus();
+//                                             state.productShow.value = true;
+//                                             var selectedSubId = subCategory.subId;
+//                                             state.productList.clear();
+//                                             for (var product in categoryController.selectedPlant?.products ?? []) {
+//                                               if (product.subId == selectedSubId) {
+//                                                 state.productList.add(product);
+//                                               }
+//                                             }
+//                                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                                           },
+//                                           color: AppColors.lightblue,
+//                                           title: '${subCategory.subName}',
+//                                         );
+//                                       },
+//                                     );
+//                                   },
+//                                 ),
+//                               ),
+//                             ),
+//                           if (state.productShow.value)
+//                             Expanded(
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: Padding(
+//                                   padding: const EdgeInsets.all(8.0),
+//                                   child: ValueListenableBuilder(
+//                                     valueListenable: state.searchProductValue,
+//                                     builder: (context, String search, child) {
+//                                       return DynamicHeightGridView(
+//                                         itemCount: state.productList.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length,
+//                                         crossAxisCount: 3,
+//                                         crossAxisSpacing: 5,
+//                                         mainAxisSpacing: 5,
+//                                         builder: (BuildContext context, int index) {
+//                                           var filteredProducts = state.productList.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//                                           var product = filteredProducts[index];
+//                                           return Obx(() {
+//                                             return AppWidgets.gridView(
+//                                               onTap: () {
+//                                                 state.selectIndex.value = index;
+//                                                 state.plantName.value = product.productName ?? "";
+//                                               },
+//                                               color: state.selectIndex.value == index ? AppColors.green : AppColors.lightblue,
+//                                               title: '${product.productName}',
+//                                             );
+//                                           });
+//                                         },
+//                                       );
+//                                     },
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                           if (state.searchProductShow.value)
+//                             Builder(builder: (context) {
+//                               state.productList.clear();
+//                               for (var product in categoryController.selectedPlant?.products ?? []) {
+//                                 state.productList.add(product);
+//                               }
+//                               return Expanded(
+//                                 child: Padding(
+//                                   padding: const EdgeInsets.all(8.0),
+//                                   child: ValueListenableBuilder(
+//                                     valueListenable: state.searchProductValue,
+//                                     builder: (context, String search, child) {
+//                                       var filteredProducts = state.productList.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//                                       if (filteredProducts.isEmpty) {
+//                                         return Center(
+//                                           child: Text(
+//                                             "No products found",
+//                                             style: AppFonts.black14.copyWith(fontWeight: FontWeight.bold),
+//                                           ),
+//                                         );
+//                                       }
+//                                       return DynamicHeightGridView(
+//                                         crossAxisCount: 3,
+//                                         crossAxisSpacing: 5,
+//                                         mainAxisSpacing: 5,
+//                                         itemCount: state.productList.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length,
+//                                         builder: (context, index) {
+//                                           var product = filteredProducts[index];
+//                                           return Obx(() {
+//                                             return AppWidgets.gridView(
+//                                               onTap: () {
+//                                                 state.selectIndex.value = index;
+//                                                 state.plantName.value = product.productName ?? "";
+//                                               },
+//                                               color: state.selectIndex.value == index ? AppColors.green : AppColors.lightblue,
+//                                               title: '${product.productName}',
+//                                             );
+//                                           });
+//                                         },
+//                                       );
+//                                     },
+//                                   ),
+//                                 ),
+//                               );
+//                             }),
+//                           Obx(
+//                             () {
+//                               return AppWidgets.incDec(
+//                                 onDec: () {
+//                                   categoryProductController.decrement();
+//                                 },
+//                                 onInc: () {
+//                                   categoryProductController.increment();
+//                                 },
+//                                 value: "${categoryProductController.counter.value}",
+//                               );
+//                             },
+//                           ),
+//                           AppWidgets.unitDis(
+//                             ctr: categoryProductController.unitPriceController,
+//                             onSubmitted1: (value) {
+//                               categoryProductController.unitPriceController.text = value;
+//                               categoryProductController.calculatePrices();
+//                             },
+//                           ),
+//                           Obx(() => Text('Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}', style: const TextStyle(fontSize: 20))),
+//                           AppWidgets.addRemoveButton(
+//                             onAdd: () {
+//                               if (state.materialProduct.any((element) => element.items == state.productList[state.selectIndex.value].productName)) {
+//                                 AppWidgets.toast(msg: "This item is already added");
+//                               } else {
+//                                 state.materialProduct.add(
+//                                   NewPurchaseProductModel(
+//                                     qty: categoryProductController.counter.value.toString(),
+//                                     items: state.plantName.value,
+//                                     itemID: state.productList[state.selectIndex.value].id ?? "0",
+//                                     itemPrice: categoryProductController.unitPriceController.text,
+//                                     itemTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                                     emsCode: state.productList[state.selectIndex.value].emsCode ?? "",
+//                                     itemName: state.productList[state.selectIndex.value].productName ?? "",
+//                                     productId: "${state.productList[state.selectIndex.value].subId}",
+//                                     partNO: state.productList[state.selectIndex.value].partNo ?? "",
+//                                     rootName: state.productList[state.selectIndex.value].rootName ?? "",
+//                                   ),
+//                                 );
+//                                 categoryProductController.newPurchaseModelListCalculations(state.plantProduct, state.materialProduct, state.accessProduct);
+//                                 state.rootCatShow.value = true;
+//                                 state.subCatShow.value = false;
+//                                 state.productShow.value = false;
+//                                 state.rootCatName.value = '';
+//                                 state.subCatName.value = '';
+//                                 state.selectIndex.value = -1;
+//                                 state.subCategoryList.clear();
+//                                 state.dialogueListChange.value = Random().nextInt(9999999);
+//                                 categoryProductController.counter.value = 0;
+//                                 categoryProductController.unitPriceController.text = '0.0';
+//                                 categoryProductController.isVisible2.value = true;
+//                                 state.dialogueListChange.value = Random().nextInt(9999999);
+//                                 FocusScope.of(context).unfocus();
+//                                 Get.back();
+//                               }
+//                             },
+//                             onRemove: () {
+//                               state.rootCatShow.value = true;
+//                               state.subCatShow.value = false;
+//                               state.productShow.value = false;
+//                               state.rootCatName.value = '';
+//                               state.subCatName.value = '';
+//                               state.selectIndex.value = -1;
+//                               state.subCategoryList.clear();
+//                               state.dialogueListChange.value = Random().nextInt(9999999);
+//                               categoryProductController.totalPrice.value = 0.0;
+//                               categoryProductController.counter.value = 0;
+//                               categoryProductController.unitPrice.value = 0.0;
+//                               categoryProductController.unitPriceController.text = '0.0';
+//                               Get.back();
+//                             },
+//                             removeText: "Cancel",
+//                           ),
+//                         ],
+//                       );
+//                     }),
+//                   ),
+//                 ),
+//               ),
+//             );
+//           },
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<dynamic> addAccessEquipmentDialogue(BuildContext context) {
+//     clearDialogueValues();
+//     return showDialog(
+//       context: context,
+//       builder: (context) {
+//         return ValueListenableBuilder(
+//           valueListenable: state.dialogueListChange,
+//           builder: (context, value, child) {
+//             return BackdropFilter(
+//               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//               child: Dialog(
+//                 insetPadding: const EdgeInsets.all(20),
+//                 backgroundColor: AppColors.white,
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//                 child: SizedBox(
+//                   child: Obx(() {
+//                     return Column(
+//                       children: [
+//                         Container(
+//                           decoration: const BoxDecoration(color: AppColors.lightblue),
+//                           child: AppBar(
+//                             backgroundColor: AppColors.lightblue,
+//                             leading: IconButton(
+//                               onPressed: () => Get.back(),
+//                               icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
+//                             ),
+//                             title: AppWidgets.customText(
+//                               text: 'Select Access Equipment',
+//                               style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
+//                             ),
+//                           ),
+//                         ),
+//                         Container(
+//                           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//                           decoration: BoxDecoration(color: AppColors.darkBlue.withValues(alpha: 0.6)),
+//                           child: AppWidgets.searchTextFeild(
+//                             onChanged: (value) => state.searchProductValue.value = value,
+//                             onTap: () {
+//                               state.searchProductShow.value = true;
+//                               state.rootCatShow.value = false;
+//                               state.subCatShow.value = false;
+//                               state.productShow.value = false;
+//                               state.rootCatName.value = '';
+//                               state.subCatName.value = '';
+//                               state.selectIndex.value = -1;
+//                               state.subCategoryList.clear();
+//                               state.dialogueListChange.value = Random().nextInt(9999999);
+//                             },
+//                             controller: state.searchFieldController,
+//                             suffixIcon: Visibility(
+//                               visible: state.searchProductShow.value,
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: CircleAvatar(
+//                                   backgroundColor: AppColors.red,
+//                                   child: IconButton(
+//                                     onPressed: () {
+//                                       state.searchProductValue.value = '';
+//                                       state.searchFieldController.clear();
+//                                       state.rootCatShow.value = true;
+//                                       state.subCatShow.value = false;
+//                                       state.productShow.value = false;
+//                                       state.searchProductShow.value = false;
+//                                       state.rootCatName.value = '';
+//                                       state.subCatName.value = '';
+//                                       state.selectIndex.value = -1;
+//                                       state.subCategoryList.clear();
+//                                       FocusScope.of(context).unfocus();
+//                                       state.dialogueListChange.value = Random().nextInt(9999999);
+//                                     },
+//                                     icon: const Icon(Icons.close, color: AppColors.white),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                         if (state.rootCatName.isNotEmpty)
+//                           Padding(
+//                             padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
+//                             child: SingleChildScrollView(
+//                               scrollDirection: Axis.horizontal,
+//                               child: SizedBox(
+//                                 width: Get.width,
+//                                 child: Row(
+//                                   mainAxisAlignment: MainAxisAlignment.start,
+//                                   children: [
+//                                     InkWell(
+//                                       onTap: () {
+//                                         state.rootCatShow.value = true;
+//                                         state.subCatShow.value = false;
+//                                         state.productShow.value = false;
+//                                         state.rootCatName.value = '';
+//                                         state.subCatName.value = '';
+//                                         state.searchFieldController.clear();
+//                                         state.searchProductValue.value = '';
+//                                         FocusScope.of(context).unfocus();
+//                                         state.subCategoryList.clear();
+//                                         state.dialogueListChange.value = Random().nextInt(9999999);
+//                                       },
+//                                       child: AppWidgets.customText(
+//                                         text: state.rootCatName.value,
+//                                         style: AppFonts.lightBlueColor14,
+//                                       ),
+//                                     ),
+//                                     const Padding(
+//                                       padding: EdgeInsets.symmetric(
+//                                         horizontal: 3.0,
+//                                       ),
+//                                       child: Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.lightblue),
+//                                     ),
+//                                     if (state.subCatName.isNotEmpty)
+//                                       InkWell(
+//                                           onTap: () {
+//                                             state.rootCatShow.value = false;
+//                                             state.subCatShow.value = true;
+//                                             state.productShow.value = false;
+//                                             state.subCatName.value = '';
+//                                             state.searchFieldController.clear();
+//                                             state.searchProductValue.value = '';
+//                                             FocusScope.of(context).unfocus();
+//                                             state.productList.clear();
+//                                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                                           },
+//                                           child: AppWidgets.customText(text: state.subCatName.value, style: AppFonts.lightBlueColor14)),
+//                                   ],
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         if (state.rootCatShow.value)
+//                           Expanded(
+//                             child: Padding(
+//                               padding: const EdgeInsets.all(10.0),
+//                               child: ValueListenableBuilder(
+//                                 valueListenable: state.searchProductValue,
+//                                 builder: (context, String search, child) {
+//                                   return DynamicHeightGridView(
+//                                     crossAxisCount: 3,
+//                                     crossAxisSpacing: 5,
+//                                     mainAxisSpacing: 5,
+//                                     itemCount: categoryController.selectedPlant?.aeRootCategories?.where((category) => search.isEmpty || (category.rootName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length ?? 0,
+//                                     builder: (context, index) {
+//                                       var filteredCategories = categoryController.selectedPlant?.aeRootCategories?.where((category) => search.isEmpty || (category.rootName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList() ?? [];
+//                                       var category = filteredCategories[index];
+//                                       return AppWidgets.gridView(
+//                                         onTap: () {
+//                                           state.rootCatName.value = '${category.rootName}';
+//                                           state.rootCatShow.value = false;
+//                                           state.subCatShow.value = false;
+//                                           state.productShow.value = true;
+//                                           state.searchFieldController.clear();
+//                                           state.searchProductValue.value = '';
+//                                           FocusScope.of(context).unfocus();
+//                                           var selectedRootId = category.rootId;
+//                                           state.productList2.clear();
+//                                           for (var product in categoryController.selectedPlant?.aeProducts ?? []) {
+//                                             if (product.rootId == selectedRootId) {
+//                                               state.productList2.add(product);
+//                                             }
+//                                           }
+//
+//                                           state.dialogueListChange.value = Random().nextInt(9999999);
+//                                         },
+//                                         color: AppColors.lightblue,
+//                                         title: '${category.rootName}',
+//                                       );
+//                                     },
+//                                   );
+//                                 },
+//                               ),
+//                             ),
+//                           ),
+//                         // if (subCatShow.value)
+//                         //   Expanded(
+//                         //       child: Padding(
+//                         //     padding: const EdgeInsets.all(8.0),
+//                         //     child: DynamicHeightGridView(
+//                         //       crossAxisCount: 3,
+//                         //       mainAxisSpacing: 5,
+//                         //       crossAxisSpacing: 5,
+//                         //       itemCount:
+//                         //           subCategoryList
+//                         //               .length,
+//                         //       builder:
+//                         //           (context, index) {
+//                         //         return CommonWidgets
+//                         //             .gridView(
+//                         //           onTap: () {
+//                         //             subCatName =
+//                         //                 '${subCategoryList[index].subName}';
+//                         //             rootCatShow
+//                         //                     .value =
+//                         //                 false;
+//                         //             subCatShow
+//                         //                     .value =
+//                         //                 false;
+//                         //             productShow
+//                         //                     .value =
+//                         //                 true;
+//                         //             // if (subCategoryList[index].subName!.isNotEmpty) {
+//                         //             //   productList.clear();
+//                         //             //
+//                         //             //   for (var i in subCategoryList[index]
+//                         //             //       .subName) {
+//                         //             //     productList
+//                         //             //         .add(i);
+//                         //             //   }
+//                         //             // }
+//                         //             listChange
+//                         //                     .value =
+//                         //                 Random().nextInt(
+//                         //                     9999999);
+//                         //           },
+//                         //           color:
+//                         //               CC.lightblue,
+//                         //           title:
+//                         //               '${subCategoryList[index].subName}',
+//                         //         );
+//                         //       },
+//                         //     ),
+//                         //   )),
+//                         if (state.productShow.value)
+//                           Expanded(
+//                             child: Padding(
+//                               padding: const EdgeInsets.all(8.0),
+//                               child: ValueListenableBuilder(
+//                                 valueListenable: state.searchProductValue,
+//                                 builder: (context, String search, child) {
+//                                   return DynamicHeightGridView(
+//                                     crossAxisCount: 3,
+//                                     mainAxisSpacing: 5,
+//                                     crossAxisSpacing: 5,
+//                                     itemCount: state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length,
+//                                     builder: (context, index) {
+//                                       var filteredProducts = state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//                                       var product = filteredProducts[index];
+//                                       return Obx(
+//                                         () {
+//                                           return AppWidgets.gridView(
+//                                             onTap: () {
+//                                               state.selectIndex.value = index;
+//                                               state.plantName.value = product.productName ?? "";
+//                                             },
+//                                             color: state.selectIndex.value == index ? AppColors.green : AppColors.lightblue,
+//                                             title: '${product.productName}',
+//                                           );
+//                                         },
+//                                       );
+//                                     },
+//                                   );
+//                                 },
+//                               ),
+//                             ),
+//                           ),
+//                         if (state.searchProductShow.value)
+//                           Builder(builder: (context) {
+//                             state.productList2.clear();
+//                             for (var product in categoryController.selectedPlant?.aeProducts ?? []) {
+//                               state.productList2.add(product);
+//                             }
+//                             return Expanded(
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: ValueListenableBuilder(
+//                                   valueListenable: state.searchProductValue,
+//                                   builder: (context, String search, child) {
+//                                     var filteredProducts = state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).toList();
+//
+//                                     if (filteredProducts.isEmpty) {
+//                                       return Center(
+//                                         child: Text(
+//                                           "No products found",
+//                                           style: AppFonts.black14.copyWith(
+//                                             fontWeight: FontWeight.bold,
+//                                           ),
+//                                         ),
+//                                       );
+//                                     }
+//
+//                                     return DynamicHeightGridView(
+//                                       crossAxisCount: 3,
+//                                       mainAxisSpacing: 5,
+//                                       crossAxisSpacing: 5,
+//                                       itemCount: state.productList2.where((product) => search.isEmpty || (product.productName?.toLowerCase().contains(search.toLowerCase()) ?? false)).length,
+//                                       builder: (context, index) {
+//                                         var product = filteredProducts[index];
+//                                         return Obx(
+//                                           () {
+//                                             return AppWidgets.gridView(
+//                                               onTap: () {
+//                                                 state.selectIndex.value = index;
+//                                                 state.plantName.value = product.productName ?? "";
+//                                               },
+//                                               color: state.selectIndex.value == index ? AppColors.green : AppColors.lightblue,
+//                                               title: '${product.productName}',
+//                                             );
+//                                           },
+//                                         );
+//                                       },
+//                                     );
+//                                   },
+//                                 ),
+//                               ),
+//                             );
+//                           }),
+//                         Obx(() {
+//                           return AppWidgets.incDec(
+//                             onDec: () => categoryProductController.decrement(),
+//                             onInc: () => categoryProductController.increment(),
+//                             value: "${categoryProductController.counter.value}",
+//                           );
+//                         }),
+//                         AppWidgets.unitDis(
+//                           ctr: categoryProductController.unitPriceController,
+//                           onSubmitted1: (value) {
+//                             categoryProductController.unitPriceController.text = value;
+//                             categoryProductController.calculatePrices();
+//                           },
+//                         ),
+//                         Obx(() => Text('Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}', style: const TextStyle(fontSize: 20))),
+//                         AppWidgets.addRemoveButton(
+//                           onAdd: () {
+//                             if (state.selectIndex.value == -1) {
+//                               AppWidgets.toast(msg: "Please select an item");
+//                               return;
+//                             }
+//                             if (state.accessProduct.any((element) => element.itemID == state.productList2[state.selectIndex.value].id)) {
+//                               AppWidgets.toast(msg: "This item is already added");
+//                               return;
+//                             } else {
+//                               state.accessProduct.add(
+//                                 NewPurchaseProductModel(
+//                                   items: state.plantName.value,
+//                                   itemName: state.productList2[state.selectIndex.value].productName ?? "",
+//                                   itemID: state.productList2[state.selectIndex.value].id ?? "0",
+//                                   qty: categoryProductController.counter.value.toString(),
+//                                   itemPrice: categoryProductController.unitPriceController.text,
+//                                   itemTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                                   productId: state.productList2[state.selectIndex.value].id ?? "0",
+//                                 ),
+//                               );
+//                               state.rootCatShow.value = true;
+//                               state.subCatShow.value = false;
+//                               state.productShow.value = false;
+//                               state.rootCatName.value = '';
+//                               state.subCatName.value = '';
+//                               categoryProductController.newPurchaseModelListCalculations(state.plantProduct, state.materialProduct, state.accessProduct);
+//                               state.subCategoryList.clear();
+//                               state.dialogueListChange.value = Random().nextInt(9999999);
+//                               categoryProductController.counter.value = 0;
+//                               categoryProductController.totalPrice.value = 0.00;
+//                               categoryProductController.unitPriceController.text = '0.0';
+//                               categoryProductController.isVisible3.value = true;
+//                               state.dialogueListChange.value = Random().nextInt(9999999);
+//                               FocusScope.of(context).unfocus();
+//                               Get.back();
+//                             }
+//                           },
+//                           onRemove: () {
+//                             state.rootCatShow.value = true;
+//                             state.subCatShow.value = false;
+//                             state.productShow.value = false;
+//                             state.rootCatName.value = '';
+//                             state.subCatName.value = '';
+//                             state.subCategoryList.clear();
+//                             state.dialogueListChange.value = Random().nextInt(9999999);
+//                             categoryProductController.totalPrice.value = 0.0;
+//                             categoryProductController.counter.value = 0;
+//                             categoryProductController.unitPrice.value = 0.0;
+//                             categoryProductController.unitPriceController.text = '0.0';
+//                             FocusScope.of(context).unfocus();
+//                             Get.back();
+//                           },
+//                           removeText: "Cancel",
+//                         ),
+//                       ],
+//                     );
+//                   }),
+//                 ),
+//               ),
+//             );
+//           },
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<dynamic> editQtyDialogue({required int index, required List<NewPurchaseProductModel> selectedProduct}) {
+//     return showDialog(
+//       context: Get.context!,
+//       builder: (context) {
+//         return BackdropFilter(
+//           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//           child: AlertDialog(
+//             titlePadding: EdgeInsets.zero,
+//             actionsPadding: EdgeInsets.zero,
+//             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//             backgroundColor: AppColors.white,
+//             surfaceTintColor: AppColors.white,
+//             insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+//             title: Container(
+//               decoration: const BoxDecoration(color: AppColors.lightblue),
+//               padding: const EdgeInsets.all(10),
+//               child: Center(
+//                 child: AppWidgets.snText(
+//                   text: "Update Quantity",
+//                   style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
+//                 ),
+//               ),
+//             ),
+//             content: Obx(() {
+//               return Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   AppWidgets.incDec(
+//                     onDec: () {
+//                       categoryProductController.decrement();
+//                       categoryProductController.calculatePrices();
+//                     },
+//                     onInc: () {
+//                       categoryProductController.increment();
+//                       categoryProductController.calculatePrices();
+//                     },
+//                     value: "${categoryProductController.counter.value}",
+//                   ),
+//                   const SizedBox(height: 10),
+//                   TextFormField(
+//                     controller: categoryProductController.unitPriceController,
+//                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+//                     decoration: const InputDecoration(
+//                       labelText: 'Unit Price',
+//                       border: OutlineInputBorder(),
+//                     ),
+//                     onChanged: (value) {
+//                       if (value.isEmpty) {
+//                         // deliveryController.textEditingController1.text = '0.0';
+//                       } else {
+//                         categoryProductController.calculatePrices();
+//                       }
+//                     },
+//                   ),
+//                   const SizedBox(height: 10),
+//                   Text(
+//                     'Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}',
+//                     style: const TextStyle(fontSize: 16),
+//                   ),
+//                 ],
+//               );
+//             }),
+//             actions: [
+//               AppWidgets.addRemoveButton(
+//                 onAdd: () {
+//                   selectedProduct[index] = NewPurchaseProductModel(
+//                     items: selectedProduct[index].items,
+//                     qty: categoryProductController.counter.value.toString(),
+//                     itemID: selectedProduct[index].itemID,
+//                     itemPrice: categoryProductController.unitPriceController.text,
+//                     itemTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                     productId: selectedProduct[index].productId,
+//                   );
+//
+//                   categoryProductController.newPurchaseModelListCalculations(state.plantProduct, state.materialProduct, state.accessProduct);
+//                   categoryProductController.isVisible3.value = true;
+//                   state.dialogueListChange.value = Random().nextInt(9999999);
+//                   FocusScope.of(context).unfocus();
+//                   Get.back();
+//                 },
+//                 onRemove: () {
+//                   selectedProduct.removeAt(index);
+//                   categoryProductController.newPurchaseModelListCalculations(state.plantProduct, state.materialProduct, state.accessProduct);
+//                   state.dialogueListChange.value = Random().nextInt(9999999);
+//                   FocusScope.of(context).unfocus();
+//                   Get.back();
+//                 },
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
+//  void clearDialogueValues() {
+//     state.rootCatName.value = '';
+//     state.subCatName.value = '';
+//     state.selectIndex.value = -1;
+//     state.subCategoryList.clear();
+//     state.productList.clear();
+//     state.productList2.clear();
+//     state.rootCatShow.value = true;
+//     state.subCatShow.value = false;
+//     state.productShow.value = false;
+//     state.searchProductShow.value = false;
+//     state.searchProductValue.value = '';
+//     state.searchFieldController.clear();
+//     categoryProductController.counter.value = 0;
+//     categoryProductController.unitPriceController.text = '0.0';
+//     categoryProductController.totalPrice.value = 0.0;
+//   }
+
+// TextEditingController materialRequiredController = TextEditingController();
+// TextEditingController equipmentRequiredController = TextEditingController();
+// RxBool rootCatShow = true.obs;
+// RxBool subCatShow = false.obs;
+// RxBool productShow = false.obs;
+// RxBool searchProductShow = false.obs;
+// ValueNotifier<String> searchProductValue = ValueNotifier<String>('');
+// ValueNotifier<int> dialogueListChange = ValueNotifier<int>(0);
+// RxList<NewPurchaseProductModel> plantProduct = <NewPurchaseProductModel>[].obs;
+// RxList<NewPurchaseProductModel> materialProduct = <NewPurchaseProductModel>[].obs;
+// RxList<NewPurchaseProductModel> accessProduct = <NewPurchaseProductModel>[].obs;
+// RxList<SubCategory2> subCategoryList = <SubCategory2>[].obs;
+// RxList<ProductElement> productList = <ProductElement>[].obs;
+// RxList<Product2> productList2 = <Product2>[].obs;
+// RxInt selectIndex = 0.obs;
+// RxString rootCatName = ''.obs;
+// RxString subCatName = ''.obs;
+// RxString plantName = ''.obs;
+
+// import 'package:sme/app/user/general/category/category_list_model.dart';
+// import 'package:sme/app/user/new_purchase_order/model/new_purchase_product_model.dart';
+
+//clear Values
+// state.materialRequiredController.clear();
+// state.equipmentRequiredController.clear();
+// state.searchProductShow.value = false;
+// state.rootCatShow.value = true;
+// state.subCatShow.value = false;
+// state.productShow.value = false;
+// state.rootCatName.value = '';
+// state.subCatName.value = '';
+// state.selectIndex.value = -1;
+// state.subCategoryList.clear();
+// state.productList.clear();
+// state.plantProduct.clear();
+// state.materialProduct.clear();
+// state.accessProduct.clear();
