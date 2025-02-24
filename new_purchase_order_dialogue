@@ -1,0 +1,346 @@
+// import 'dart:ui';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:responsive_sizer/responsive_sizer.dart';
+// import 'package:sme/app/user/general/category/category_list_logic.dart';
+// import 'package:sme/app/user/general/category/category_logic.dart';
+// import 'package:sme/app/user/new_purchase_order/model/new_purchase_addproduct_model.dart';
+// import 'package:sme/app/user/new_purchase_order/new_purchase_order_logic.dart';
+// import 'package:sme/app/user/new_purchase_order/new_purchase_order_state.dart';
+// import 'package:sme/utils/appcolor.dart';
+// import 'package:sme/utils/appfonts.dart';
+// import 'package:sme/utils/appwidgets.dart';
+//
+// class NewPurchaseOrderDialogues {
+//   final NewPurchaseOrderLogic newPurchaseLogic = Get.put(NewPurchaseOrderLogic());
+//   final CategoryController categoryController = Get.put(CategoryController());
+//   final NewPurchaseOrderState state = Get.find<NewPurchaseOrderLogic>().state;
+//   final CategoryListController categoryProductController = Get.put(CategoryListController());
+//
+//   Future<dynamic> addMaterialProductDialogue() async {
+//     categoryProductController.counter.value = 0;
+//     categoryProductController.unitPriceController.text = '0.0';
+//     categoryProductController.totalPrice.value = 0.0;
+//     state.addManualMaterialFieldController.clear();
+//     return showDialog(
+//       context: Get.context!,
+//       builder: (context) {
+//         return BackdropFilter(
+//           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//           child: AlertDialog(
+//             contentPadding: const EdgeInsets.all(20),
+//             iconPadding: const EdgeInsets.all(0),
+//             actionsPadding: const EdgeInsets.all(0),
+//             insetPadding: const EdgeInsets.all(25),
+//             titlePadding: const EdgeInsets.all(0),
+//             backgroundColor: AppColors.white.withValues(alpha: .9),
+//             surfaceTintColor: AppColors.white.withValues(alpha: .9),
+//             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0), side: const BorderSide(color: AppColors.white, width: 1.5)),
+//             title: Container(
+//               width: Get.width,
+//               decoration: const BoxDecoration(color: AppColors.lightBlue),
+//               alignment: Alignment.center,
+//               child: AppBar(
+//                 backgroundColor: AppColors.lightBlue,
+//                 leading: const SizedBox(),
+//                 title: AppWidgets.snText(text: 'Add Material', style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp)),
+//                 centerTitle: true,
+//               ),
+//             ),
+//             content: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 TextField(
+//                   cursorColor: AppColors.lightBlue,
+//                   controller: state.addManualMaterialFieldController,
+//                   decoration: const InputDecoration(
+//                     labelText: 'Enter Material Name',
+//                     border: OutlineInputBorder(borderSide: BorderSide(color: AppColors.lightBlue)),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 15),
+//                 Obx(() {
+//                   return AppWidgets.incDec(
+//                     onDec: () => categoryProductController.decrement(),
+//                     onInc: () => categoryProductController.increment(),
+//                     value: "${categoryProductController.counter.value}",
+//                   );
+//                 }),
+//                 const SizedBox(height: 5),
+//                 AppWidgets.unitDis(
+//                   ctr: categoryProductController.unitPriceController,
+//                   onSubmitted1: (value) {
+//                     categoryProductController.unitPriceController.text = value;
+//                     categoryProductController.calculatePrices();
+//                   },
+//                 ),
+//                 const SizedBox(height: 10),
+//                 Obx(() {
+//                   return Text(
+//                     'Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}',
+//                     style: const TextStyle(fontSize: 16),
+//                   );
+//                 }),
+//                 const SizedBox(height: 10),
+//                 Row(
+//                   children: [
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         style: ElevatedButton.styleFrom(backgroundColor: AppColors.red, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))),
+//                         onPressed: () => Get.back(),
+//                         child: AppWidgets.snText(text: "Cancel", style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         onPressed: () {
+//                           if (state.addManualMaterialFieldController.text.isNotEmpty && state.addManualMaterialFieldController.text.isNotEmpty) {
+//                             state.newPurchaseManualMaterialList.add(NewPurchaseAddProductModel(
+//                               productId: "0",
+//                               productName: state.addManualMaterialFieldController.text,
+//                               productPrice: categoryProductController.unitPriceController.text,
+//                               productQty: categoryProductController.counter.value.toString(),
+//                               productTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                             ));
+//                             state.valueAmountController.text = state.newPurchaseManualMaterialList.fold<double>(0.0, (previousValue, element) {
+//                               final productPrice = double.tryParse(element.productPrice ?? '0') ?? 0.0;
+//                               final productQty = double.tryParse(element.productQty ?? '0') ?? 0.0;
+//                               return previousValue + productPrice * productQty;
+//                             }).toString();
+//                             Get.back();
+//                           } else {
+//                             AppWidgets.toast(msg: "Please fill all the fields");
+//                           }
+//                         },
+//                         style: ElevatedButton.styleFrom(
+//                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//                           backgroundColor: AppColors.green,
+//                         ),
+//                         child: AppWidgets.snText(
+//                           text: "Add",
+//                           style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 )
+//               ],
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<dynamic> addEquipmentProductDialogue() async {
+//     categoryProductController.counter.value = 0;
+//     categoryProductController.unitPriceController.text = '0.0';
+//     categoryProductController.totalPrice.value = 0.0;
+//     state.addManualMaterialFieldController.clear();
+//     return showDialog(
+//       context: Get.context!,
+//       builder: (context) {
+//         return BackdropFilter(
+//           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//           child: AlertDialog(
+//             contentPadding: const EdgeInsets.all(20),
+//             iconPadding: const EdgeInsets.all(0),
+//             actionsPadding: const EdgeInsets.all(0),
+//             insetPadding: const EdgeInsets.all(25),
+//             titlePadding: const EdgeInsets.all(0),
+//             backgroundColor: AppColors.white.withValues(alpha: .9),
+//             surfaceTintColor: AppColors.white.withValues(alpha: .9),
+//             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0), side: const BorderSide(color: AppColors.white, width: 1.5)),
+//             title: Container(
+//               width: Get.width,
+//               decoration: const BoxDecoration(color: AppColors.lightBlue),
+//               alignment: Alignment.center,
+//               child: AppBar(
+//                 backgroundColor: AppColors.lightBlue,
+//                 leading: const SizedBox(),
+//                 title: AppWidgets.snText(
+//                   text: 'Add Equipment',
+//                   style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
+//                 ),
+//                 centerTitle: true,
+//               ),
+//             ),
+//             content: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 TextField(
+//                   cursorColor: AppColors.lightBlue,
+//                   controller: state.addManualMaterialFieldController,
+//                   decoration: const InputDecoration(
+//                     labelText: 'Enter Equipment Name',
+//                     border: OutlineInputBorder(
+//                       borderSide: BorderSide(color: AppColors.lightBlue),
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 15),
+//                 Obx(() {
+//                   return AppWidgets.incDec(
+//                     onDec: () => categoryProductController.decrement(),
+//                     onInc: () => categoryProductController.increment(),
+//                     value: "${categoryProductController.counter.value}",
+//                   );
+//                 }),
+//                 const SizedBox(height: 5),
+//                 AppWidgets.unitDis(
+//                   ctr: categoryProductController.unitPriceController,
+//                   onSubmitted1: (value) {
+//                     categoryProductController.unitPriceController.text = value;
+//                     categoryProductController.calculatePrices();
+//                   },
+//                 ),
+//                 const SizedBox(height: 10),
+//                 Obx(() {
+//                   return Text(
+//                     'Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}',
+//                     style: const TextStyle(fontSize: 16),
+//                   );
+//                 }),
+//                 const SizedBox(height: 10),
+//                 Row(
+//                   children: [
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         style: ElevatedButton.styleFrom(backgroundColor: AppColors.red, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))),
+//                         onPressed: () => Get.back(),
+//                         child: AppWidgets.snText(text: "Cancel", style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         onPressed: () {
+//                           if (state.addManualMaterialFieldController.text.isNotEmpty && state.addManualMaterialFieldController.text.isNotEmpty) {
+//                             state.newPurchaseManualEquipmentList.add(
+//                               NewPurchaseAddProductModel(
+//                                 productId: "0",
+//                                 productName: state.addManualMaterialFieldController.text,
+//                                 productPrice: categoryProductController.unitPriceController.text,
+//                                 productQty: categoryProductController.counter.value.toString(),
+//                                 productTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                               ),
+//                             );
+//                             state.valueAmountController.text = state.newPurchaseManualEquipmentList.fold<double>(0.0, (previousValue, element) {
+//                               final productPrice = double.tryParse(element.productPrice ?? '0') ?? 0.0;
+//                               final productQty = double.tryParse(element.productQty ?? '0') ?? 0.0;
+//                               return previousValue + productPrice * productQty;
+//                             }).toString();
+//                             Get.back();
+//                           } else {
+//                             AppWidgets.toast(msg: "Please fill all the fields");
+//                           }
+//                         },
+//                         style: ElevatedButton.styleFrom(
+//                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+//                           backgroundColor: AppColors.green,
+//                         ),
+//                         child: AppWidgets.snText(
+//                           text: "Add",
+//                           style: AppFonts.white16.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 )
+//               ],
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<dynamic> editQtyDialogueForAdd({required int index, required List<NewPurchaseAddProductModel> selectedProduct}) {
+//     categoryProductController.counter.value = int.tryParse(selectedProduct[index].productQty.toString()) ?? 0;
+//     categoryProductController.unitPriceController.text = selectedProduct[index].productPrice.toString();
+//     categoryProductController.totalPrice.value = double.tryParse(selectedProduct[index].productTotalPrice.toString()) ?? 0.0;
+//     return showDialog(
+//       context: Get.context!,
+//       builder: (context) {
+//         return BackdropFilter(
+//           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//           child: AlertDialog(
+//             titlePadding: EdgeInsets.zero,
+//             actionsPadding: EdgeInsets.zero,
+//             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0), side: const BorderSide(color: AppColors.white, width: 1.5)),
+//             backgroundColor: AppColors.white,
+//             surfaceTintColor: AppColors.white,
+//             insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+//             contentPadding: const EdgeInsets.all(20),
+//             title: Container(
+//               width: Get.width * 0.9,
+//               decoration: const BoxDecoration(color: AppColors.lightBlue),
+//               padding: const EdgeInsets.all(15),
+//               child: Center(
+//                 child: AppWidgets.snText(
+//                   text: "Update Quantity",
+//                   style: AppFonts.white18.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
+//                 ),
+//               ),
+//             ),
+//             content: Obx(() {
+//               return Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   AppWidgets.incDec(
+//                     onDec: () {
+//                       categoryProductController.decrement();
+//                       categoryProductController.calculatePrices();
+//                     },
+//                     onInc: () {
+//                       categoryProductController.increment();
+//                       categoryProductController.calculatePrices();
+//                     },
+//                     value: "${categoryProductController.counter.value}",
+//                   ),
+//                   const SizedBox(height: 10),
+//                   TextFormField(
+//                     controller: categoryProductController.unitPriceController,
+//                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+//                     decoration: const InputDecoration(labelText: 'Unit Price', border: OutlineInputBorder()),
+//                     onChanged: (value) {
+//                       if (value.isEmpty) {
+//                         // deliveryController.textEditingController1.text = '0.0';
+//                       } else {
+//                         categoryProductController.calculatePrices();
+//                       }
+//                     },
+//                   ),
+//                   const SizedBox(height: 10),
+//                   Text(
+//                     'Total Price: ${categoryProductController.totalPrice.value.toStringAsFixed(2)}',
+//                     style: const TextStyle(fontSize: 16),
+//                   ),
+//                 ],
+//               );
+//             }),
+//             actions: [
+//               AppWidgets.addRemoveButton(
+//                 onAdd: () {
+//                   selectedProduct[index] = NewPurchaseAddProductModel(
+//                     productId: selectedProduct[index].productId,
+//                     productQty: categoryProductController.counter.value.toString(),
+//                     productPrice: categoryProductController.unitPriceController.text,
+//                     productName: selectedProduct[index].productName,
+//                     productTotalPrice: categoryProductController.totalPrice.value.toString(),
+//                   );
+//                   FocusScope.of(context).unfocus();
+//                   Get.back();
+//                 },
+//                 onRemove: () {
+//                   selectedProduct.removeAt(index);
+//                   FocusScope.of(context).unfocus();
+//                   Get.back();
+//                 },
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
