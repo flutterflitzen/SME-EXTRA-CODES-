@@ -1,0 +1,602 @@
+import 'package:flutter/material.dart';
+
+class FamilyTreeScreen extends StatefulWidget {
+  const FamilyTreeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FamilyTreeScreen> createState() => _FamilyTreeScreenState();
+}
+
+class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
+  // Controller for zooming and panning
+  final TransformationController _transformationController = TransformationController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Family Tree'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.zoom_in),
+            onPressed: () {
+              _transformationController.value = _transformationController.value.scaled(1.1, 1.1);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.zoom_out),
+            onPressed: () {
+              _transformationController.value = _transformationController.value.scaled(0.9, 0.9);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              _transformationController.value = Matrix4.identity();
+            },
+          ),
+        ],
+      ),
+      body: InteractiveViewer(
+        transformationController: _transformationController,
+        minScale: 0.5,
+        maxScale: 2.5,
+        boundaryMargin: const EdgeInsets.all(double.infinity),
+        child: Center(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildFamilyTree(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add new family member
+          showDialog(
+            context: context,
+            builder: (context) => AddFamilyMemberDialog(
+              onMemberAdded: (name, imageUrl) {
+                // Handle adding new member
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Added $name to family tree')),
+                );
+              },
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+        tooltip: 'Add Family Member',
+      ),
+    );
+  }
+
+  Widget _buildFamilyTree() {
+    return CustomPaint(
+      painter: FamilyTreePainter(),
+      child: SizedBox(
+        width: 900,
+        height: 600,
+        child: Stack(
+          children: [
+            // Root person (Me)
+            Positioned(
+              left: 100,
+              top: 270,
+              child: FamilyMemberWidget(
+                name: 'My name',
+                imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+                isRoot: true,
+                onTap: () => _showMemberDetails('My name'),
+              ),
+            ),
+
+            // Father
+            Positioned(
+              left: 300,
+              top: 150,
+              child: FamilyMemberWidget(
+                name: 'Father\'s name',
+                imageUrl: 'https://randomuser.me/api/portraits/men/70.jpg',
+                onTap: () => _showMemberDetails('Father\'s name'),
+              ),
+            ),
+
+            // Mother
+            Positioned(
+              left: 300,
+              top: 390,
+              child: FamilyMemberWidget(
+                name: 'Mother\'s name',
+                imageUrl: 'https://randomuser.me/api/portraits/women/70.jpg',
+                onTap: () => _showMemberDetails('Mother\'s name'),
+              ),
+            ),
+
+            // Paternal Grandfather
+            Positioned(
+              left: 500,
+              top: 90,
+              child: FamilyMemberWidget(
+                name: 'Grandfather\'s name',
+                imageUrl: 'https://randomuser.me/api/portraits/men/79.jpg',
+                onTap: () => _showMemberDetails('Grandfather\'s name'),
+              ),
+            ),
+
+            // Paternal Grandmother
+            Positioned(
+              left: 500,
+              top: 210,
+              child: FamilyMemberWidget(
+                name: 'Grandmother\'s name',
+                imageUrl: 'https://randomuser.me/api/portraits/women/79.jpg',
+                onTap: () => _showMemberDetails('Grandmother\'s name'),
+              ),
+            ),
+
+            // Maternal Grandfather
+            Positioned(
+              left: 500,
+              top: 330,
+              child: FamilyMemberWidget(
+                name: 'Grandfather\'s name',
+                imageUrl: 'https://randomuser.me/api/portraits/men/83.jpg',
+                onTap: () => _showMemberDetails('Grandfather\'s name'),
+              ),
+            ),
+
+            // Maternal Grandmother
+            Positioned(
+              left: 500,
+              top: 450,
+              child: FamilyMemberWidget(
+                name: 'Grandmother\'s name',
+                imageUrl: 'https://randomuser.me/api/portraits/women/83.jpg',
+                onTap: () => _showMemberDetails('Grandmother\'s name'),
+              ),
+            ),
+
+            // Great Grandparents (placeholders)
+            for (int i = 0; i < 8; i++)
+              Positioned(
+                left: 700,
+                top: 50.0 + i * 70,
+                child: FamilyPlaceholderWidget(
+                  name: 'Name',
+                  onTap: () => _showAddMemberDialog(i),
+                ),
+              ),
+
+            // Great Great Grandparents (placeholders)
+            for (int i = 0; i < 16; i++)
+              Positioned(
+                left: 900,
+                top: 30.0 + i * 35,
+                child: FamilyPlaceholderWidget(
+                  name: 'Name',
+                  size: 60,
+                  onTap: () => _showAddMemberDialog(i + 8),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMemberDetails(String name) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('$name Details'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Birth Date: January 1, 1980'),
+            const Text('Place of Birth: New York, USA'),
+            const Text('Occupation: Software Engineer'),
+            const SizedBox(height: 16),
+            const Text('Bio:'),
+            Text('Information about $name goes here. You can add more details as needed.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Edit member details
+            },
+            child: const Text('Edit'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddMemberDialog(int position) {
+    showDialog(
+      context: context,
+      builder: (context) => AddFamilyMemberDialog(
+        onMemberAdded: (name, imageUrl) {
+          // Handle adding new member
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Added $name to family tree')),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class FamilyTreePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.shade400
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    // Draw lines connecting family members
+    // Main line from me to parents
+    canvas.drawLine(const Offset(170, 295), const Offset(220, 295), paint);
+
+    // Line splitting to father and mother
+    canvas.drawLine(const Offset(220, 295), const Offset(220, 170), paint);
+    canvas.drawLine(const Offset(220, 295), const Offset(220, 415), paint);
+
+    // Lines to father and mother
+    canvas.drawLine(const Offset(220, 170), const Offset(300, 170), paint);
+    canvas.drawLine(const Offset(220, 415), const Offset(300, 415), paint);
+
+    // Lines from father to paternal grandparents
+    canvas.drawLine(const Offset(370, 170), const Offset(420, 170), paint);
+    canvas.drawLine(const Offset(420, 170), const Offset(420, 110), paint);
+    canvas.drawLine(const Offset(420, 170), const Offset(420, 230), paint);
+    canvas.drawLine(const Offset(420, 110), const Offset(500, 110), paint);
+    canvas.drawLine(const Offset(420, 230), const Offset(500, 230), paint);
+
+    // Lines from mother to maternal grandparents
+    canvas.drawLine(const Offset(370, 415), const Offset(420, 415), paint);
+    canvas.drawLine(const Offset(420, 415), const Offset(420, 350), paint);
+    canvas.drawLine(const Offset(420, 415), const Offset(420, 470), paint);
+    canvas.drawLine(const Offset(420, 350), const Offset(500, 350), paint);
+    canvas.drawLine(const Offset(420, 470), const Offset(500, 470), paint);
+
+    // Lines to great grandparents
+    for (int i = 0; i < 4; i++) {
+      double x1 = 570;
+      double y1 = 110 + i * 120;
+      double x2 = 620;
+      double y2 = y1;
+      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
+
+      // Split lines
+      canvas.drawLine(Offset(x2, y2), Offset(x2, y2 - 30), paint);
+      canvas.drawLine(Offset(x2, y2), Offset(x2, y2 + 30), paint);
+      canvas.drawLine(Offset(x2, y2 - 30), Offset(700, y2 - 30), paint);
+      canvas.drawLine(Offset(x2, y2 + 30), Offset(700, y2 + 30), paint);
+    }
+
+    // Lines to great great grandparents
+    for (int i = 0; i < 8; i++) {
+      double x1 = 770;
+      double y1 = 80 + i * 70;
+      double x2 = 820;
+      double y2 = y1;
+      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
+
+      // Split lines
+      canvas.drawLine(Offset(x2, y2), Offset(x2, y2 - 15), paint);
+      canvas.drawLine(Offset(x2, y2), Offset(x2, y2 + 15), paint);
+      canvas.drawLine(Offset(x2, y2 - 15), Offset(900, y2 - 15), paint);
+      canvas.drawLine(Offset(x2, y2 + 15), Offset(900, y2 + 15), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class FamilyMemberWidget extends StatelessWidget {
+  final String name;
+  final String imageUrl;
+  final bool isRoot;
+  final VoidCallback onTap;
+  final double size;
+
+  const FamilyMemberWidget({
+    Key? key,
+    required this.name,
+    required this.imageUrl,
+    this.isRoot = false,
+    required this.onTap,
+    this.size = 90,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isRoot ? Colors.blue : Colors.grey,
+                width: isRoot ? 3 : 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 5,
+                  offset: const Offset(2, 2),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(
+            width: size * 1.2,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              color: isRoot ? Colors.blue.shade100 : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 3,
+                  offset: const Offset(1, 1),
+                ),
+              ],
+            ),
+            child: Text(
+              name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isRoot ? 14 : 12,
+                fontWeight: isRoot ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FamilyPlaceholderWidget extends StatelessWidget {
+  final String name;
+  final VoidCallback onTap;
+  final double size;
+
+  const FamilyPlaceholderWidget({
+    Key? key,
+    required this.name,
+    required this.onTap,
+    this.size = 70,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey.shade300,
+                width: 2,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.add_circle_outline,
+                size: size * 0.4,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(
+            width: size * 1.2,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.grey.shade300,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Text(
+              name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AddFamilyMemberDialog extends StatefulWidget {
+  final Function(String name, String imageUrl) onMemberAdded;
+
+  const AddFamilyMemberDialog({
+    Key? key,
+    required this.onMemberAdded,
+  }) : super(key: key);
+
+  @override
+  State<AddFamilyMemberDialog> createState() => _AddFamilyMemberDialogState();
+}
+
+class _AddFamilyMemberDialogState extends State<AddFamilyMemberDialog> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController();
+  final TextEditingController _birthPlaceController = TextEditingController();
+  final TextEditingController _occupationController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Default image URL
+    _imageUrlController.text = 'https://randomuser.me/api/portraits/lego/1.jpg';
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _imageUrlController.dispose();
+    _birthDateController.dispose();
+    _birthPlaceController.dispose();
+    _occupationController.dispose();
+    _bioController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Family Member'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                hintText: 'Enter full name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _imageUrlController,
+              decoration: const InputDecoration(
+                labelText: 'Image URL',
+                hintText: 'Enter URL for profile picture',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _birthDateController,
+              decoration: const InputDecoration(
+                labelText: 'Birth Date',
+                hintText: 'e.g., January 1, 1980',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _birthPlaceController,
+              decoration: const InputDecoration(
+                labelText: 'Place of Birth',
+                hintText: 'e.g., New York, USA',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _occupationController,
+              decoration: const InputDecoration(
+                labelText: 'Occupation',
+                hintText: 'e.g., Software Engineer',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _bioController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Biography',
+                hintText: 'Enter brief life details',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            if (_nameController.text.isNotEmpty && _imageUrlController.text.isNotEmpty) {
+              widget.onMemberAdded(_nameController.text, _imageUrlController.text);
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please enter at least a name and image URL'),
+                ),
+              );
+            }
+          },
+          child: const Text('Add'),
+        ),
+      ],
+    );
+  }
+}
