@@ -1,0 +1,18 @@
+import UIKit
+
+/// Protocol for UIApplication methods relating to launching URLs.
+///
+/// This protocol exists to allow injecting an alternate implementation for testing.
+protocol Launcher {
+    /// Returns a Boolean value that indicates whether an app is available to handle a URL scheme.
+    func canOpenURL(_ url: URL) -> Bool
+
+    /// Attempts to asynchronously open the resource at the specified URL.
+    func open(
+        _ url: URL,
+        options: [UIApplication.OpenExternalURLOptionsKey: Any],
+        completionHandler: (@MainActor @Sendable (Bool) -> Void)?)
+}
+
+/// Make UIApplication conform to Launcher protocol.
+extension UIApplication: Launcher {}
